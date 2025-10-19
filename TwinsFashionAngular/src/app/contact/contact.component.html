@@ -1,0 +1,58 @@
+<section class="contact">
+  <header class="contact__hero">
+    <div class="contact__hero-overlay"></div>
+    <div class="contact__hero-content">
+      <p class="contact__kicker">Twins Fashion</p>
+      <h1 class="contact__title">Контакти</h1>
+      <p class="contact__intro">Свържете се с нас за поръчки, индивидуални запитвания или съдействие.</p>
+    </div>
+  </header>
+
+  <div class="contact__body">
+    <section class="contact__form-card">
+      <h2 class="contact__section-title">Изпрати ни съобщение</h2>
+      <form class="contact__form" #contactForm="ngForm" (ngSubmit)="submitContact(contactForm)" novalidate>
+        <label class="contact__form-field">
+          <span class="contact__form-label">Вашият имейл</span>
+          <input type="email" name="email" required [(ngModel)]="formData.email" />
+        </label>
+
+        <label class="contact__form-field contact__form-field--textarea">
+          <span class="contact__form-label">Как можем да помогнем?</span>
+          <textarea name="message" rows="6" placeholder="Вашето съобщение" required [(ngModel)]="formData.message"></textarea>
+        </label>
+
+        <button type="submit" class="contact__submit" [disabled]="submitting">
+          {{ submitting ? 'Изпращане...' : 'Изпрати' }}
+        </button>
+        <p *ngIf="submitSuccess" class="contact__success">Благодарим! Съобщението беше изпратено.</p>
+        <p *ngIf="submitError" class="contact__error">Моля проверете полетата и опитайте отново.</p>
+      </form>
+    </section>
+
+    <section class="contact__details">
+      <div class="contact__info">
+        <div class="contact__info-block">
+          <h3>Адрес</h3>
+          <p>град Пазарджик</p>
+          <p>улица Професор Асен Златарев 15</p>
+        </div>
+
+        <div class="contact__info-block">
+          <h3>Телефон за връзка</h3>
+          <a href="tel:+359885147120">+359 88 514 7120</a>
+        </div>
+      </div>
+
+      <div class="contact__map">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2675.065952655002!2d24.33057007557703!3d42.1921226456957!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14acafffccf10e29%3A0xbd10a6b2502af5c2!2z0J_QsNC30LDRgNC00LbQuNC6INCm0LXQvdGC0YrRgCwg0YPQuy4g4oCe0J_RgNC-0YTQtdGB0L7RgCDQkNGB0LXQvSDQl9C70LDRgtCw0YDQvtCy4oCcIDE1LCA0NDAwINCf0LDQt9Cw0YDQtNC20LjQug!5e1!3m2!1sbg!2sbg!4v1760823966673!5m2!1sbg!2sbg" 
+        width="100%" 
+          height="360"
+          style="border:0;"
+          allowfullscreen
+          loading="lazy"
+        ></iframe>
+      </div>
+    </section>
+  </div>
+</section>

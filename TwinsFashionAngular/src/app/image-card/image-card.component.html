@@ -1,0 +1,15 @@
+<article class="card">
+  <div class="card__media">
+    <img [src]="imageSrc" [alt]="imageAlt || title" loading="lazy" />
+    <span *ngIf="badge" class="card__badge">{{ badge }}</span>
+  </div>
+
+  <div class="card__body">
+    <h3 class="card__title">{{ title }}</h3>
+    <p *ngIf="hasDescription" class="card__description">{{ description }}</p>
+    <p *ngIf="price !== undefined" class="card__price">
+      <span class="card__price-label">{{ priceLabel || 'Цена' }}:</span>
+      {{ price | number:'1.2-2' }} лв
+    </p>
+  </div>
+</article>

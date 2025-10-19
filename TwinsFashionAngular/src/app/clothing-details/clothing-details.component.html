@@ -1,0 +1,73 @@
+<section class="details" *ngIf="product as item; else loadingTemplate">
+  <div class="details__gallery">
+    <div class="details__thumbnails" role="list">
+      <button
+        *ngFor="let image of gallery; let i = index"
+        type="button"
+        class="details__thumbnail"
+        [class.details__thumbnail--active]="selectedImageIndex === i"
+        (click)="selectImage(i)"
+        [attr.aria-label]="image.alt"
+      >
+        <img [src]="image.url" [alt]="image.alt" loading="lazy" />
+      </button>
+    </div>
+
+    <figure class="details__hero-image">
+      <img [src]="selectedImageUrl" [alt]="gallery[selectedImageIndex].alt || item.title" />
+    </figure>
+  </div>
+
+  <div class="details__content">
+    <h1 class="details__title">{{ item.title }}</h1>
+    <p class="details__price">{{ item.price | number:'1.2-2' }} лв</p>
+    <p class="details__short">{{ item.description }}</p>
+
+    <div class="details__meta">
+      <div class="details__meta-row">
+        <span class="details__meta-label">Категория:</span>
+        <span class="details__meta-value">{{ item.category }}</span>
+      </div>
+    </div>
+
+    <div class="details__form">
+      <label class="details__field">
+        <span class="details__field-label">Количество</span>
+        <input
+          type="number"
+          min="1"
+          max="10"
+          [value]="quantity"
+          (input)="updateQuantity($any($event.target).value)"
+        />
+      </label>
+
+      <label class="details__field">
+        <span class="details__field-label">Размер</span>
+        <select [(ngModel)]="selectedSize" name="size">
+          <option [ngValue]="undefined" disabled>Изберете размер</option>
+          <option *ngFor="let size of item.sizes" [ngValue]="size" [disabled]="!size.inStock">
+            {{ size.label }}
+            <span *ngIf="!size.inStock">(Изчерпано)</span>
+          </option>
+        </select>
+      </label>
+
+      <button class="details__add" type="button" (click)="addToCart()">
+        <span class="details__add-icon" aria-hidden="true">🛒</span>
+        Добави в количката
+      </button>
+    </div>
+
+    <article class="details__description" *ngIf="item.longDescription">
+      <h2>Описание</h2>
+      <p>{{ item.longDescription }}</p>
+    </article>
+  </div>
+</section>
+
+<ng-template #loadingTemplate>
+  <section class="details details--loading">
+    <p>Зареждане на продукта...</p>
+  </section>
+</ng-template>

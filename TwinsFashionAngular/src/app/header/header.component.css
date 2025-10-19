@@ -1,0 +1,105 @@
+:host { display: block; }
+
+.site-header {
+  background: #ffffff;
+  border-bottom: 1px solid #eee;
+  position: relative; /* context for mobile menu */
+  z-index: 100;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 12px; /* малко отстояние от страницата */
+  display: flex;
+  align-items: center;
+  gap: 12px; /* малко разстояние между елементите */
+  min-height: 80px; /* Increased from 60px to 80px */
+}
+
+.left .logo img {
+  height: 48px; /* Increased from 36px to 48px */
+  width: auto;
+  display: block;
+}
+
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: transparent;
+  border: 0;
+  padding: 8px;
+  cursor: pointer;
+}
+.menu-toggle span {
+  width: 22px;
+  height: 2px;
+  background: #222;
+  display: block;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: 8px;
+}
+.nav-links a {
+  color: #1a1a1a;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 12px 8px; /* Increased padding for better visibility */
+  border-radius: 6px;
+  font-size: 16px; /* Added font size for better visibility */
+}
+.nav-links a.active {
+  background: #f3f4f6;
+}
+
+.right {
+  margin-left: auto; /* количката най-вдясно */
+  display: flex;
+  align-items: center;
+}
+.cart {
+  position: relative;
+  color: #1a1a1a;
+  text-decoration: none;
+  padding: 8px;
+  border-radius: 6px;
+}
+.cart .icon { font-size: 20px; }
+.cart .badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(40%, -40%);
+  background: #ef4444;
+  color: #fff;
+  font-size: 11px;
+  min-width: 18px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 999px;
+  padding: 0 4px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .container { min-height: 56px; }
+  .menu-toggle { display: flex; }
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    display: none;
+    flex-direction: column;
+    padding: 8px 12px 12px;
+  }
+  .nav-links.open { display: flex; }
+}

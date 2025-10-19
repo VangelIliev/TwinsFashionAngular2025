@@ -1,0 +1,25 @@
+<section class="collection">
+  <header class="collection__header">
+    <span class="collection__badge">Ново Есенно / Зимна Колекция</span>
+    <h1 class="collection__title">{{ collectionTitle }}</h1>
+  </header>
+
+  <div class="collection__grid">
+    <a
+      *ngFor="let item of items"
+      class="collection__card-link"
+      [routerLink]="['/clothes', item.slug]"
+    >
+      <app-image-card
+        class="collection__card"
+        [imageSrc]="item.coverImage.url"
+        [imageAlt]="item.coverImage.alt"
+        [title]="item.title"
+        [description]="item.description"
+        [price]="item.price"
+        [priceLabel]="priceLabel"
+        [badge]="item.badge"
+      ></app-image-card>
+    </a>
+  </div>
+</section>

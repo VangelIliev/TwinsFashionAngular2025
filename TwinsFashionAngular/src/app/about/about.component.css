@@ -1,0 +1,134 @@
+.about {
+  display: flex;
+  flex-direction: column;
+  color: #2a2522;
+}
+
+.about__hero {
+  position: relative;
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+  background: url('https://res.cloudinary.com/dl6dp2cr0/image/upload/v1760823185/bg-01_asqf43.jpg') center/cover no-repeat;
+  overflow: hidden;
+}
+
+.about__hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(7, 5, 9, 0.45) 0%, rgba(7, 5, 9, 0.75) 100%);
+  backdrop-filter: blur(2px);
+}
+
+.about__hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 96px 16px;
+  display: grid;
+  gap: 16px;
+  max-width: 720px;
+  color: #fff7e0;
+}
+
+.about__kicker {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+  font-size: 14px;
+  color: #f5d97b;
+}
+
+.about__title {
+  margin: 0;
+  font-size: clamp(38px, 6vw, 72px);
+  letter-spacing: 0.04em;
+}
+
+.about__intro {
+  margin: 0 auto;
+  font-size: clamp(16px, 2.4vw, 20px);
+  max-width: 620px;
+}
+
+.about__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  gap: clamp(32px, 6vw, 64px);
+  padding: clamp(48px, 6vw, 80px) clamp(16px, 6vw, 72px) clamp(72px, 8vw, 112px);
+  align-items: start;
+  background: linear-gradient(180deg, #fbf6ef 0%, #f2ece4 100%);
+}
+
+.about__content {
+  display: grid;
+  gap: 20px;
+  font-size: 17px;
+  line-height: 1.78;
+}
+
+.about__content p {
+  margin: 0;
+}
+
+.about__gallery {
+  display: grid;
+  gap: clamp(18px, 3vw, 28px);
+}
+
+.about__photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: 0 20px 45px rgba(15, 12, 11, 0.18);
+}
+
+.about__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about__photo--primary {
+  aspect-ratio: 4 / 5;
+}
+
+.about__photo--secondary {
+  aspect-ratio: 3 / 4;
+  margin-left: clamp(24px, 4vw, 36px);
+}
+
+@media (max-width: 1024px) {
+  .about__body {
+    grid-template-columns: 1fr;
+  }
+
+  .about__gallery {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    margin-top: 12px;
+  }
+
+  .about__photo--secondary {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .about__hero {
+    min-height: 260px;
+  }
+
+  .about__hero-content {
+    padding: 72px 16px;
+  }
+
+  .about__body {
+    padding: 48px 16px 72px;
+  }
+
+  .about__content {
+    font-size: 16px;
+  }
+}

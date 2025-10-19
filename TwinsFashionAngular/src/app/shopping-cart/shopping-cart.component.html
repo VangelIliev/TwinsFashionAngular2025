@@ -1,0 +1,94 @@
+<section class="cart" *ngIf="hasItems; else emptyCart">
+  <div class="cart__items">
+    <header class="cart__header">
+      <h1>Вашата количка</h1>
+    </header>
+
+    <div class="cart__list">
+      <article class="cart__item" *ngFor="let item of items">
+        <div class="cart__item-media">
+          <img [src]="item.imageUrl" [alt]="item.title" loading="lazy" />
+        </div>
+
+        <div class="cart__item-info">
+          <h2>{{ item.title }}</h2>
+          <div class="cart__item-meta">
+            <span class="cart__item-label">Размер:</span>
+            <span class="cart__item-value">{{ item.size || 'Стандартен' }}</span>
+          </div>
+          <div class="cart__item-meta">
+            <span class="cart__item-label">Ед. цена:</span>
+            <span class="cart__item-value">{{ item.price | number:'1.2-2' }} лв</span>
+          </div>
+        </div>
+
+        <div class="cart__item-actions">
+          <div class="cart__quantity">
+            <button type="button" (click)="decrement(item)" aria-label="Намали">−</button>
+            <span>{{ item.quantity }}</span>
+            <button type="button" (click)="increment(item)" aria-label="Увеличи">+</button>
+          </div>
+          <button class="cart__remove" type="button" (click)="remove(item)">
+            <span aria-hidden="true">🗑️</span>
+            Премахни
+          </button>
+        </div>
+
+        <div class="cart__item-total">
+          {{ (item.price * item.quantity) | number:'1.2-2' }} лв
+        </div>
+      </article>
+    </div>
+
+    <footer class="cart__footer">
+      <div class="cart__cta">
+        <a routerLink="/clothes" class="cart__back">← Продължи пазаруването</a>
+      </div>
+    </footer>
+  </div>
+
+  <aside class="cart__summary">
+    <div class="cart__summary-card">
+      <h2>Обща цена</h2>
+      <div class="cart__summary-row">
+        <span>Междинна сума</span>
+        <span>{{ subtotal | number:'1.2-2' }} лв</span>
+      </div>
+      <div class="cart__summary-row cart__summary-row--total">
+        <span>Общо</span>
+        <span>{{ total | number:'1.2-2' }} лв</span>
+      </div>
+      <button type="button" class="cart__checkout" (click)="submitOrder()" [disabled]="orderSubmitting">
+        {{ orderSubmitting ? 'Изпращане...' : 'Поръчай' }}
+      </button>
+      <p *ngIf="orderSuccess" class="cart__success">Поръчката беше изпратена успешно!</p>
+      <p *ngIf="orderError" class="cart__error">Възникна грешка при изпращане на поръчката. Опитайте отново.</p>
+    </div>
+
+    <section class="cart__shipping">
+      <h3>Доставка</h3>
+      <p>Моля попълнете данните за доставка.</p>
+      <form class="cart__shipping-form" (ngSubmit)="submitOrder()" #orderForm="ngForm" novalidate>
+        <input type="text" name="customerName" placeholder="Име и фамилия" required [(ngModel)]="order.customerName" />
+        <input type="text" name="city" placeholder="Град" required [(ngModel)]="order.city" />
+        <select name="deliveryPlace" required [(ngModel)]="order.deliveryPlace">
+          <option value="" disabled selected>Изберете място на доставка</option>
+          <option value="office">Офис на Еконт</option>
+          <option value="address">Адрес</option>
+        </select>
+        <input type="text" name="deliveryAddress" placeholder="Адрес за доставка" required [(ngModel)]="order.deliveryAddress" />
+        <input type="tel" name="phone" placeholder="Телефонен номер" required [(ngModel)]="order.phone" />
+      </form>
+    </section>
+  </aside>
+</section>
+
+<ng-template #emptyCart>
+  <section class="cart cart--empty">
+    <div class="cart--empty__content">
+      <h2>Количката е празна</h2>
+      <p>Добавете продукти, за да финализирате поръчката си.</p>
+      <a routerLink="/clothes" class="cart__back">Започни пазаруване</a>
+    </div>
+  </section>
+</ng-template>

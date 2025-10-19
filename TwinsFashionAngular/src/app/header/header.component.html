@@ -1,0 +1,39 @@
+<header class="site-header">
+  <div class="container">
+    <!-- Mobile menu toggle -->
+    <button class="menu-toggle" aria-label="Меню" [attr.aria-expanded]="menuOpen" (click)="menuOpen = !menuOpen">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <!-- Logo -->
+    <div class="left">
+      <a class="logo" routerLink="/" (click)="menuOpen = false" aria-label="Начало">
+        <!-- Важно: използвай относителния Angular път към assets -->
+        <img src="assets/img/logo.png" alt="Twins Fashion" />
+      </a>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav-links" [class.open]="menuOpen" role="navigation" aria-label="Основна навигация">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="menuOpen = false">Начало</a>
+      <a routerLink="/clothes" routerLinkActive="active" (click)="menuOpen = false">Дрехи</a>
+      <a routerLink="/about" routerLinkActive="active" (click)="menuOpen = false">За Нас</a>
+      <a routerLink="/contact" routerLinkActive="active" (click)="menuOpen = false">Контакти</a>
+    </nav>
+
+    <!-- Cart -->
+    <div class="right">
+      <a class="cart" routerLink="/cart" aria-label="Количка" (click)="menuOpen = false">
+        <span class="icon" aria-hidden="true">
+          <!-- Simple cart SVG icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 4h-2l-1 2m0 0l3.6 7.59c.17.33.51.54.88.54h7.84c.37 0 .71-.21.88-.54L21 6H4zm3 13a1 1 0 100 2 1 1 0 000-2zm8 0a1 1 0 100 2 1 1 0 000-2z" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+      </a>
+    </div>
+  </div>
+</header>
