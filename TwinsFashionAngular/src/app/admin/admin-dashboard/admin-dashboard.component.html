@@ -1,0 +1,272 @@
+<div class="admin-dashboard">
+  <header class="admin-dashboard__header">
+    <h1>Admin Dashboard</h1>
+    <button class="admin-dashboard__logout" (click)="logout()">Изход</button>
+  </header>
+
+  <div class="admin-dashboard__content" *ngIf="!loading">
+    <!-- Action Buttons -->
+    <div class="admin-dashboard__actions">
+      <button class="admin-dashboard__button admin-dashboard__button--primary" (click)="openAddProductModal()">
+        Добави Продукт
+      </button>
+      <button class="admin-dashboard__button" (click)="openAddCategoryModal()">
+        Добави Категория
+      </button>
+      <button class="admin-dashboard__button" (click)="openAddSubCategoryModal()">
+        Добави Подкатегория
+      </button>
+      <button class="admin-dashboard__button" (click)="openAddColorModal()">
+        Добави Цвят
+      </button>
+      <button class="admin-dashboard__button" (click)="openAddSizeModal()">
+        Добави Размер
+      </button>
+    </div>
+
+    <!-- Products Table -->
+    <div class="admin-dashboard__section">
+      <h2>Продукти ({{ products.length }})</h2>
+      <div class="admin-dashboard__table-container">
+        <table class="admin-dashboard__table">
+          <thead>
+            <tr>
+              <th>Име</th>
+              <th>Категория</th>
+              <th>Подкатегория</th>
+              <th>Цвят</th>
+              <th>Цена</th>
+              <th>Снимки</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of products">
+              <td>{{ product.name }}</td>
+              <td>{{ product.category }}</td>
+              <td>{{ product.subcategory }}</td>
+              <td>{{ product.color }}</td>
+              <td>{{ product.price | number:'1.2-2' }} лв</td>
+              <td>
+                <div class="admin-dashboard__images">
+                  <img 
+                    *ngFor="let image of product.images.slice(0, 3)" 
+                    [src]="image.url" 
+                    [alt]="product.name"
+                    class="admin-dashboard__image"
+                    [class.admin-dashboard__image--cover]="image.isCover"
+                  />
+                  <span *ngIf="product.images.length > 3" class="admin-dashboard__more-images">
+                    +{{ product.images.length - 3 }}
+                  </span>
+                </div>
+              </td>
+              <td>
+                <button class="admin-dashboard__action-button" (click)="openSetCoverModal(product)">
+                  Cover
+                </button>
+                <button class="admin-dashboard__action-button admin-dashboard__action-button--danger" (click)="deleteProduct(product)">
+                  Изтрий
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-dashboard__loading" *ngIf="loading">
+    <p>Зареждане...</p>
+  </div>
+</div>
+
+<!-- Add Product Modal -->
+<div class="modal" *ngIf="showAddProductModal" (click)="closeAddProductModal()">
+  <div class="modal__content" (click)="$event.stopPropagation()">
+    <div class="modal__header">
+      <h3>Добави Продукт</h3>
+      <button class="modal__close" (click)="closeAddProductModal()">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-group">
+        <label>Име:</label>
+        <input type="text" [(ngModel)]="newProduct.name" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>Описание:</label>
+        <textarea [(ngModel)]="newProduct.description" class="form-control"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Цена:</label>
+          <input type="number" [(ngModel)]="newProduct.price" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Количество:</label>
+          <input type="number" [(ngModel)]="newProduct.quantity" class="form-control">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Категория:</label>
+          <select [(ngModel)]="newProduct.categoryId" class="form-control">
+            <option value="">Избери категория</option>
+            <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Подкатегория:</label>
+          <select [(ngModel)]="newProduct.subCategoryId" class="form-control">
+            <option value="">Избери подкатегория</option>
+            <option *ngFor="let subCategory of subCategories" [value]="subCategory.id">{{ subCategory.name }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Цвят:</label>
+        <select [(ngModel)]="newProduct.colorId" class="form-control">
+          <option value="">Избери цвят</option>
+          <option *ngFor="let color of colors" [value]="color.id">{{ color.name }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>URL на снимка:</label>
+        <div class="input-group">
+          <input type="url" [(ngModel)]="newImageUrl" class="form-control" placeholder="https://...">
+          <button type="button" (click)="addImageUrl()" class="btn btn-secondary">Добави</button>
+        </div>
+        <div class="image-urls" *ngIf="newProduct.imageUrls.length > 0">
+          <div *ngFor="let url of newProduct.imageUrls; let i = index" class="image-url-item">
+            <span>{{ url }}</span>
+            <button type="button" (click)="removeImageUrl(i)" class="btn btn-sm btn-danger">&times;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn-secondary" (click)="closeAddProductModal()">Отказ</button>
+      <button class="btn btn-primary" (click)="addProduct()">Добави</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Category Modal -->
+<div class="modal" *ngIf="showAddCategoryModal" (click)="closeAddCategoryModal()">
+  <div class="modal__content" (click)="$event.stopPropagation()">
+    <div class="modal__header">
+      <h3>Добави Категория</h3>
+      <button class="modal__close" (click)="closeAddCategoryModal()">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-group">
+        <label>Име на категория:</label>
+        <input type="text" [(ngModel)]="newCategory.name" class="form-control">
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn-secondary" (click)="closeAddCategoryModal()">Отказ</button>
+      <button class="btn btn-primary" (click)="addCategory()">Добави</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add SubCategory Modal -->
+<div class="modal" *ngIf="showAddSubCategoryModal" (click)="closeAddSubCategoryModal()">
+  <div class="modal__content" (click)="$event.stopPropagation()">
+    <div class="modal__header">
+      <h3>Добави Подкатегория</h3>
+      <button class="modal__close" (click)="closeAddSubCategoryModal()">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-group">
+        <label>Категория:</label>
+        <select [(ngModel)]="newSubCategory.categoryId" class="form-control">
+          <option value="">Избери категория</option>
+          <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Име на подкатегория:</label>
+        <input type="text" [(ngModel)]="newSubCategory.name" class="form-control">
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn-secondary" (click)="closeAddSubCategoryModal()">Отказ</button>
+      <button class="btn btn-primary" (click)="addSubCategory()">Добави</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Color Modal -->
+<div class="modal" *ngIf="showAddColorModal" (click)="closeAddColorModal()">
+  <div class="modal__content" (click)="$event.stopPropagation()">
+    <div class="modal__header">
+      <h3>Добави Цвят</h3>
+      <button class="modal__close" (click)="closeAddColorModal()">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-group">
+        <label>Име на цвят:</label>
+        <input type="text" [(ngModel)]="newColor.name" class="form-control">
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn-secondary" (click)="closeAddColorModal()">Отказ</button>
+      <button class="btn btn-primary" (click)="addColor()">Добави</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Size Modal -->
+<div class="modal" *ngIf="showAddSizeModal" (click)="closeAddSizeModal()">
+  <div class="modal__content" (click)="$event.stopPropagation()">
+    <div class="modal__header">
+      <h3>Добави Размер</h3>
+      <button class="modal__close" (click)="closeAddSizeModal()">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Тип:</label>
+          <input type="text" [(ngModel)]="newSize.type" class="form-control" placeholder="напр. S, M, L">
+        </div>
+        <div class="form-group">
+          <label>Размер:</label>
+          <input type="text" [(ngModel)]="newSize.size" class="form-control" placeholder="напр. 36, 38, 40">
+        </div>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn-secondary" (click)="closeAddSizeModal()">Отказ</button>
+      <button class="btn btn-primary" (click)="addSize()">Добави</button>
+    </div>
+  </div>
+</div>
+
+<!-- Set Cover Image Modal -->
+<div class="modal" *ngIf="showSetCoverModal" (click)="closeSetCoverModal()">
+  <div class="modal__content modal__content--large" (click)="$event.stopPropagation()">
+    <div class="modal__header">
+      <h3>Задай Cover Снимка за {{ selectedProductForCover?.name }}</h3>
+      <button class="modal__close" (click)="closeSetCoverModal()">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="cover-images-grid">
+        <div 
+          *ngFor="let image of selectedProductForCover?.images" 
+          class="cover-image-option"
+          [class.cover-image-option--selected]="selectedCoverImageId === image.id"
+          (click)="selectedCoverImageId = image.id"
+        >
+          <img [src]="image.url" [alt]="selectedProductForCover?.name">
+          <div *ngIf="image.isCover" class="cover-badge">Cover</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn-secondary" (click)="closeSetCoverModal()">Отказ</button>
+      <button class="btn btn-primary" (click)="setCoverImage()" [disabled]="!selectedCoverImageId">Задай Cover</button>
+    </div>
+  </div>
+</div>

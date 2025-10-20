@@ -9,9 +9,9 @@ import { ContactService, ContactRequest } from '../services/contact.service';
   styleUrls: ['./contact.component.css']
 })
 export class ContactComponent {
-  formData: ContactRequest = {
-    email: '',
-    message: ''
+  formData = {
+    emailAddress: '',
+    description: ''
   };
   submitting = false;
   submitSuccess = false;
@@ -33,7 +33,7 @@ export class ContactComponent {
       next: () => {
         this.submitting = false;
         this.submitSuccess = true;
-        this.formData = { email: '', message: '' };
+        this.formData = { emailAddress: '', description: '' };
         form.resetForm();
       },
       error: () => {

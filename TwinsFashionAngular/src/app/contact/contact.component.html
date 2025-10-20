@@ -14,12 +14,12 @@
       <form class="contact__form" #contactForm="ngForm" (ngSubmit)="submitContact(contactForm)" novalidate>
         <label class="contact__form-field">
           <span class="contact__form-label">Вашият имейл</span>
-          <input type="email" name="email" required [(ngModel)]="formData.email" />
+          <input type="email" name="emailAddress" required [(ngModel)]="formData.emailAddress" />
         </label>
 
         <label class="contact__form-field contact__form-field--textarea">
           <span class="contact__form-label">Как можем да помогнем?</span>
-          <textarea name="message" rows="6" placeholder="Вашето съобщение" required [(ngModel)]="formData.message"></textarea>
+          <textarea name="description" required [(ngModel)]="formData.description"></textarea>
         </label>
 
         <button type="submit" class="contact__submit" [disabled]="submitting">

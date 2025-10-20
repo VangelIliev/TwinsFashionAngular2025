@@ -7,7 +7,6 @@ namespace TwinsFashion.Domain.Interfaces
         public Task<IEnumerable<ProductDto>> GetAllProductsAsync();
 
         public Task<ProductDto?> GetProductByIdAsync(Guid id);
-
         Task<bool> SeedProductToDatabase(string categoryName, string colorName, string subcategoryName, IEnumerable<SizeDto> sizes);
 
         Task<IEnumerable<ColorDto>> GetColors();
@@ -40,5 +39,8 @@ namespace TwinsFashion.Domain.Interfaces
         Task<bool> CreateColorAsync(string name);
         Task<bool> CreateSizeAsync(string type, string size);
         Task<bool> CreateSubCategoryAsync(Guid categoryId, string name);
+        
+        // Set cover image for product
+        Task<bool> SetCoverImageAsync(Guid productId, Guid imageId);
     }
 }

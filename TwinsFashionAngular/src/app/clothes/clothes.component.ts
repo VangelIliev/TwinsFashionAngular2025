@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { ClothingItem, ClothingService } from '../services/clothing.service';
 
 @Component({
@@ -7,13 +8,21 @@ import { ClothingItem, ClothingService } from '../services/clothing.service';
   templateUrl: './clothes.component.html',
   styleUrls: ['./clothes.component.css']
 })
-export class ClothesComponent {
+export class ClothesComponent implements OnInit, OnDestroy {
   readonly priceLabel = 'Цена';
   readonly collectionTitle = 'Есенна / Зимна Колекция 2025';
+  items: ClothingItem[] = [];
+  private subscription?: Subscription;
 
   constructor(private clothingService: ClothingService) {}
 
-  get items(): ClothingItem[] {
-    return this.clothingService.getAll();
+  ngOnInit(): void {
+    this.subscription = this.clothingService.loadAll().subscribe(items => {
+      this.items = items;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 }

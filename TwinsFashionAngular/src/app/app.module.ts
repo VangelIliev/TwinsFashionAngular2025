@@ -14,6 +14,7 @@ import { AboutComponent } from './about/about.component';
 import { ContactComponent } from './contact/contact.component';
 import { ClothingDetailsComponent } from './clothing-details/clothing-details.component';
 import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
+import { ThankYouComponent } from './thank-you/thank-you.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ThankYouComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

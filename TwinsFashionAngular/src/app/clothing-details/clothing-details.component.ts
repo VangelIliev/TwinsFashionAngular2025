@@ -16,8 +16,9 @@ export class ClothingDetailsComponent implements OnInit, OnDestroy {
   selectedSize?: ClothingSizeOption;
   quantity = 1;
   loading = true;
-
+  
   private subscription?: Subscription;
+  private productSubscription?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -28,28 +29,35 @@ export class ClothingDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscription = this.route.paramMap.subscribe(params => {
-      const slug = params.get('slug');
-      if (!slug) {
+      const id = params.get('id');
+      if (!id) {
         this.router.navigate(['/clothes']);
         return;
       }
 
-      const product = this.clothingService.getBySlug(slug);
-      if (!product) {
-        this.router.navigate(['/clothes']);
-        return;
-      }
+      this.loading = true;
 
-      this.product = product;
-      this.selectedImageIndex = 0;
-      this.selectedSize = product.sizes.find(size => size.inStock);
-      this.quantity = 1;
-      this.loading = false;
+      this.productSubscription?.unsubscribe();
+      this.productSubscription = this.clothingService.getById(id).subscribe(product => {
+        if (!product) {
+          this.router.navigate(['/clothes']);
+          return;
+        }
+
+        this.product = product;
+        // Set selected image to cover image if available, otherwise first image
+        const coverImageIndex = product.gallery.findIndex(img => img.isCover);
+        this.selectedImageIndex = coverImageIndex >= 0 ? coverImageIndex : 0;
+        this.selectedSize = product.sizes.find(size => size.inStock);
+        this.quantity = 1;
+        this.loading = false;
+      });
     });
   }
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
+    this.productSubscription?.unsubscribe();
   }
 
   get gallery() {

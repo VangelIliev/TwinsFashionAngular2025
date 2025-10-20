@@ -1,0 +1,49 @@
+<div class="admin-login">
+  <div class="admin-login__container">
+    <div class="admin-login__header">
+      <h1>Admin Login</h1>
+      <p>Влезте в административния панел</p>
+    </div>
+
+    <form class="admin-login__form" (ngSubmit)="onSubmit($event)" #loginForm="ngForm">
+      <div class="admin-login__field">
+        <label for="username" class="admin-login__label">Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          class="admin-login__input"
+          [(ngModel)]="credentials.username"
+          required
+          [disabled]="loading"
+        />
+      </div>
+
+      <div class="admin-login__field">
+        <label for="password" class="admin-login__label">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="admin-login__input"
+          [(ngModel)]="credentials.password"
+          required
+          [disabled]="loading"
+        />
+      </div>
+
+      <div class="admin-login__error" *ngIf="error">
+        {{ error }}
+      </div>
+
+      <button
+        type="submit"
+        class="admin-login__button"
+        [disabled]="loading || !loginForm.form.valid"
+      >
+        <span *ngIf="loading">Влизане...</span>
+        <span *ngIf="!loading">Влез</span>
+      </button>
+    </form>
+  </div>
+</div>

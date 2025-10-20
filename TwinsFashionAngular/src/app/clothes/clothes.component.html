@@ -8,12 +8,12 @@
     <a
       *ngFor="let item of items"
       class="collection__card-link"
-      [routerLink]="['/clothes', item.slug]"
+      [routerLink]="['/clothes', item.id]"
     >
       <app-image-card
         class="collection__card"
-        [imageSrc]="item.coverImage.url"
-        [imageAlt]="item.coverImage.alt"
+        [imageSrc]="item.coverImageUrl"
+        [imageAlt]="item.coverImageUrl"
         [title]="item.title"
         [description]="item.description"
         [price]="item.price"

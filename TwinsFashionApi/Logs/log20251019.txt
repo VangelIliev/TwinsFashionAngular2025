@@ -1,0 +1,78 @@
+2025-10-19 15:56:48.656 +03:00 [INF] User profile is available. Using 'C:\Users\Vange\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-10-19 15:56:48.932 +03:00 [INF] Now listening on: https://localhost:7185
+2025-10-19 15:56:48.934 +03:00 [INF] Now listening on: http://localhost:5286
+2025-10-19 15:56:49.022 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-19 15:56:49.023 +03:00 [INF] Hosting environment: Development
+2025-10-19 15:56:49.025 +03:00 [INF] Content root path: C:\Users\Vange\source\repos\New Projects 2025\TwinsFashionAngular\TwinsFashionApi
+2025-10-19 15:56:49.618 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger - null null
+2025-10-19 15:56:49.766 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger - 301 0 null 157.1882ms
+2025-10-19 15:56:49.770 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/index.html - null null
+2025-10-19 15:56:49.859 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/index.html - 200 null text/html;charset=utf-8 89.1374ms
+2025-10-19 15:56:49.891 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/swagger-ui.css - null null
+2025-10-19 15:56:49.891 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/_vs/browserLink - null null
+2025-10-19 15:56:49.891 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/swagger-ui-bundle.js - null null
+2025-10-19 15:56:49.891 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/_framework/aspnetcore-browser-refresh.js - null null
+2025-10-19 15:56:49.891 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/swagger-ui-standalone-preset.js - null null
+2025-10-19 15:56:49.940 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/_framework/aspnetcore-browser-refresh.js - 200 16515 application/javascript; charset=utf-8 49.1642ms
+2025-10-19 15:56:49.949 +03:00 [INF] Sending file. Request path: '/swagger-ui.css'. Physical path: 'N/A'
+2025-10-19 15:56:49.949 +03:00 [INF] Sending file. Request path: '/swagger-ui-standalone-preset.js'. Physical path: 'N/A'
+2025-10-19 15:56:49.954 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/swagger-ui.css - 200 152034 text/css 63.1986ms
+2025-10-19 15:56:49.954 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/swagger-ui-standalone-preset.js - 200 230280 text/javascript 63.3218ms
+2025-10-19 15:56:49.985 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/_vs/browserLink - 200 null text/javascript; charset=UTF-8 94.5118ms
+2025-10-19 15:56:49.991 +03:00 [INF] Sending file. Request path: '/swagger-ui-bundle.js'. Physical path: 'N/A'
+2025-10-19 15:56:49.992 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/swagger-ui-bundle.js - 200 1456926 text/javascript 101.658ms
+2025-10-19 15:56:50.109 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/v1/swagger.json - null null
+2025-10-19 15:56:50.118 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 9.602ms
+2025-10-19 15:56:50.131 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/favicon-32x32.png - null null
+2025-10-19 15:56:50.134 +03:00 [INF] Sending file. Request path: '/favicon-32x32.png'. Physical path: 'N/A'
+2025-10-19 15:56:50.136 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/favicon-32x32.png - 200 628 image/png 5.1566ms
+2025-10-19 16:02:44.485 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/index.html - null null
+2025-10-19 16:02:44.504 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/index.html - 200 null text/html;charset=utf-8 19.0349ms
+2025-10-19 16:02:44.551 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/_framework/aspnetcore-browser-refresh.js - null null
+2025-10-19 16:02:44.555 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/_framework/aspnetcore-browser-refresh.js - 200 16515 application/javascript; charset=utf-8 4.6923ms
+2025-10-19 16:02:44.559 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/_vs/browserLink - null null
+2025-10-19 16:02:44.577 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/_vs/browserLink - 200 null text/javascript; charset=UTF-8 18.397ms
+2025-10-19 16:02:44.755 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/v1/swagger.json - null null
+2025-10-19 16:02:44.758 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 3.5285ms
+2025-10-19 16:21:11.932 +03:00 [INF] User profile is available. Using 'C:\Users\Vange\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-10-19 16:21:12.156 +03:00 [INF] Now listening on: https://localhost:7185
+2025-10-19 16:21:12.158 +03:00 [INF] Now listening on: http://localhost:5286
+2025-10-19 16:21:12.228 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-19 16:21:12.229 +03:00 [INF] Hosting environment: Development
+2025-10-19 16:21:12.230 +03:00 [INF] Content root path: C:\Users\Vange\source\repos\New Projects 2025\TwinsFashionAngular\TwinsFashionApi
+2025-10-19 16:21:12.581 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger - null null
+2025-10-19 16:21:12.705 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger - 301 0 null 130.8469ms
+2025-10-19 16:21:12.711 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/index.html - null null
+2025-10-19 16:21:12.776 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/index.html - 200 null text/html;charset=utf-8 65.3648ms
+2025-10-19 16:21:12.791 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/swagger-ui.css - null null
+2025-10-19 16:21:12.799 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/swagger-ui-bundle.js - null null
+2025-10-19 16:21:12.807 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/_vs/browserLink - null null
+2025-10-19 16:21:12.801 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/_framework/aspnetcore-browser-refresh.js - null null
+2025-10-19 16:21:12.801 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/swagger-ui-standalone-preset.js - null null
+2025-10-19 16:21:12.830 +03:00 [INF] Sending file. Request path: '/swagger-ui.css'. Physical path: 'N/A'
+2025-10-19 16:21:12.845 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/swagger-ui.css - 200 152034 text/css 54.2616ms
+2025-10-19 16:21:12.927 +03:00 [INF] Sending file. Request path: '/swagger-ui-standalone-preset.js'. Physical path: 'N/A'
+2025-10-19 16:21:12.845 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/_framework/aspnetcore-browser-refresh.js - 200 16515 application/javascript; charset=utf-8 43.5726ms
+2025-10-19 16:21:12.936 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/swagger-ui-standalone-preset.js - 200 230280 text/javascript 135.5919ms
+2025-10-19 16:21:12.941 +03:00 [INF] Sending file. Request path: '/swagger-ui-bundle.js'. Physical path: 'N/A'
+2025-10-19 16:21:12.947 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/swagger-ui-bundle.js - 200 1456926 text/javascript 147.5541ms
+2025-10-19 16:21:12.962 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/_vs/browserLink - 200 null text/javascript; charset=UTF-8 157.7628ms
+2025-10-19 16:21:13.071 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/v1/swagger.json - null null
+2025-10-19 16:21:13.080 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 8.9343ms
+2025-10-19 16:21:13.093 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/favicon-32x32.png - null null
+2025-10-19 16:21:13.097 +03:00 [INF] Sending file. Request path: '/favicon-32x32.png'. Physical path: 'N/A'
+2025-10-19 16:21:13.098 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/favicon-32x32.png - 200 628 image/png 5.4032ms
+2025-10-19 17:56:02.131 +03:00 [INF] User profile is available. Using 'C:\Users\Vange\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-10-19 17:56:02.203 +03:00 [INF] Now listening on: http://localhost:5286
+2025-10-19 17:56:02.205 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-19 17:56:02.206 +03:00 [INF] Hosting environment: Development
+2025-10-19 17:56:02.207 +03:00 [INF] Content root path: C:\Users\Vange\source\repos\New Projects 2025\TwinsFashionAngular\TwinsFashionApi
+2025-10-19 17:56:09.514 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5286/ - null null
+2025-10-19 17:56:09.543 +03:00 [WRN] Failed to determine the https port for redirect.
+2025-10-19 17:56:09.559 +03:00 [INF] Cookies was not authenticated. Failure message: Unprotect ticket failed
+2025-10-19 17:56:09.566 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5286/ - 404 0 null 51.7228ms
+2025-10-19 17:56:09.577 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5286/, Response status code: 404
+2025-10-19 17:56:12.406 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5286/ - null null
+2025-10-19 17:56:12.412 +03:00 [INF] Cookies was not authenticated. Failure message: Unprotect ticket failed
+2025-10-19 17:56:12.414 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5286/ - 404 0 null 7.9752ms
+2025-10-19 17:56:12.418 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5286/, Response status code: 404

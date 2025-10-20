@@ -33,6 +33,9 @@ namespace TwinsFashion.Domain.Implementation
                     .Include(p => p.Images)
                     .Include(p => p.Sizes)
                     .Include(p => p.SubCategory)
+                    .OrderBy(p => p.SubCategory.Name == "Якета" ? 0 : 1) // Якета първи
+                    .ThenBy(p => p.SubCategory.Name) // След това по азбучен ред на категориите
+                    .ThenBy(p => p.Name) // И накрая по име на продукта
                     .ToListAsync();
                 if (!dataProducts.Any())
                 {
@@ -166,6 +169,7 @@ namespace TwinsFashion.Domain.Implementation
                     {
                         Id = Guid.NewGuid(),
                         ProductId = productId,
+                        IsCover = false,
                         Url = "/images/pants/Elizabeth_Franchie_Pants.jpg"
                     }
                 };
@@ -478,6 +482,53 @@ namespace TwinsFashion.Domain.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating subcategory {Name} for category {CategoryId}", name, categoryId);
+                return false;
+            }
+        }
+
+        public async Task<bool> SetCoverImageAsync(Guid productId, Guid imageId)
+        {
+            try
+            {
+                if (productId == Guid.Empty || imageId == Guid.Empty)
+                {
+                    return false;
+                }
+
+                // Check if product exists
+                var productExists = await _context.Products.AnyAsync(p => p.Id == productId);
+                if (!productExists)
+                {
+                    return false;
+                }
+
+                // Check if image exists and belongs to the product
+                var image = await _context.Images
+                    .FirstOrDefaultAsync(i => i.Id == imageId && i.ProductId == productId);
+                if (image == null)
+                {
+                    return false;
+                }
+
+                // Set all images for this product to not be cover
+                var allProductImages = await _context.Images
+                    .Where(i => i.ProductId == productId)
+                    .ToListAsync();
+
+                foreach (var img in allProductImages)
+                {
+                    img.IsCover = false;
+                }
+
+                // Set the selected image as cover
+                image.IsCover = true;
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error setting cover image {ImageId} for product {ProductId}", imageId, productId);
                 return false;
             }
         }

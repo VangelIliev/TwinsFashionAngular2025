@@ -58,7 +58,7 @@ public class AppDbContext : DbContext
                 j =>
                 {
                     j.HasKey("ProductId", "SizeId");
-                    j.ToTable("ProductSizes");
+                    j.ToTable("ProductSize");
                 });
 
         modelBuilder.Entity<Product>()

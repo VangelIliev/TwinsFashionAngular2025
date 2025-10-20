@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { ClothingItem } from './clothing.service';
+import { environment } from '../../environments/environment';
 
 export interface CartItem {
   productId: string;
@@ -74,7 +75,7 @@ export class CartService {
         price: product.price,
         quantity: Math.max(1, Math.min(options.quantity, 10)),
         size: keySize,
-        imageUrl: product.coverImage.url
+        imageUrl: product.coverImageUrl
       });
     }
 
@@ -122,6 +123,6 @@ export class CartService {
       total: this.getSubtotal()
     };
 
-    return this.http.post('/ShoppingBasket/Order', payload);
+    return this.http.post(`${environment.apiBaseUrl}/api/ShoppingBasket/order`, payload);
   }
 }

@@ -177,15 +177,33 @@
 
 .cart__shipping-form {
   display: grid;
-  gap: 12px;
+  gap: 14px;
 }
 
-.cart__shipping-form input,
-.cart__shipping-form select {
+.cart__form-field {
+  display: grid;
+  gap: 6px;
+}
+
+.cart__form-field input,
+.cart__form-field select {
   padding: 12px 14px;
   border-radius: 14px;
   border: 1px solid #d8cfc8;
   background: #fdfbf7;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cart__form-field small {
+  font-size: 0.85rem;
+  color: #d33c3c;
+  margin-left: 4px;
+}
+
+.cart__form-field--error input,
+.cart__form-field--error select {
+  border-color: #d33c3c;
+  box-shadow: 0 0 0 3px rgba(211, 60, 60, 0.15);
 }
 
 .cart--empty {

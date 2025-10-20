@@ -1,15 +1,12 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TwinsFashion.Data.Models;
 using TwinsFashion.Domain.Models;
 
 namespace TwinsFashion.Domain.Mappers
 {
-    internal class DomainMapper : IDomainMapper
+    public class DomainMapper : IDomainMapper
     {
         public IEnumerable<CategoryDto> MapDomainCategories(IEnumerable<Category> categories)
         {
@@ -86,13 +83,19 @@ namespace TwinsFashion.Domain.Mappers
                 return null;
             }
 
+            var images = product.Images ?? [];
+            var coverImageUrl = images.FirstOrDefault(img => img.IsCover)?.Url ?? images.FirstOrDefault()?.Url ?? string.Empty;
+
             return new ProductDto
             {
                 Id = product.Id,
                 Name = product.Name,
                 Description = product.Description,
+                LongDescription = product.Description,
                 Price = product.Price,
                 Quantity = product.Quantity,
+                Badge = string.Empty,
+                CoverImageUrl = coverImageUrl,
                 Category = product.Category is null ? null : new CategoryDto
                 {
                     Id = product.Category.Id,
@@ -109,11 +112,13 @@ namespace TwinsFashion.Domain.Mappers
                     Id = product.Color.Id,
                     Name = product.Color.Name
                 },
-                Images = product.Images?.Select(img => new ImageDto
+                Images = images.Select(img => new ImageDto
                 {
                     Id = img.Id,
-                    Url = img.Url
-                }).ToList() ?? new List<ImageDto>(),
+                    Url = img.Url,
+                    Alt = string.IsNullOrWhiteSpace(img.Url) ? product.Name : product.Name,
+                    IsCover = img.IsCover
+                }).ToList(),
                 Sizes = MapDomainSizes(product.Sizes ?? []).ToList()
             };
         }
@@ -145,5 +150,6 @@ namespace TwinsFashion.Domain.Mappers
                 };
             }
         }
+
     }
 }

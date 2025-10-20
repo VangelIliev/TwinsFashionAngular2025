@@ -68,16 +68,39 @@
     <section class="cart__shipping">
       <h3>Доставка</h3>
       <p>Моля попълнете данните за доставка.</p>
-      <form class="cart__shipping-form" (ngSubmit)="submitOrder()" #orderForm="ngForm" novalidate>
-        <input type="text" name="customerName" placeholder="Име и фамилия" required [(ngModel)]="order.customerName" />
-        <input type="text" name="city" placeholder="Град" required [(ngModel)]="order.city" />
-        <select name="deliveryPlace" required [(ngModel)]="order.deliveryPlace">
-          <option value="" disabled selected>Изберете място на доставка</option>
-          <option value="office">Офис на Еконт</option>
-          <option value="address">Адрес</option>
-        </select>
-        <input type="text" name="deliveryAddress" placeholder="Адрес за доставка" required [(ngModel)]="order.deliveryAddress" />
-        <input type="tel" name="phone" placeholder="Телефонен номер" required [(ngModel)]="order.phone" />
+      <form class="cart__shipping-form" novalidate #orderForm="ngForm">
+        <div class="cart__form-field" [class.cart__form-field--error]="validationErrors.customerName">
+          <input type="text" name="customerName" placeholder="Име и фамилия" required
+                 [(ngModel)]="order.customerName" (blur)="onFieldBlur('customerName')" />
+          <small *ngIf="validationErrors.customerName">{{ validationErrors.customerName }}</small>
+        </div>
+
+        <div class="cart__form-field" [class.cart__form-field--error]="validationErrors.city">
+          <input type="text" name="city" placeholder="Град" required
+                 [(ngModel)]="order.city" (blur)="onFieldBlur('city')" />
+          <small *ngIf="validationErrors.city">{{ validationErrors.city }}</small>
+        </div>
+
+        <div class="cart__form-field" [class.cart__form-field--error]="validationErrors.deliveryPlace">
+          <select name="deliveryPlace" required [(ngModel)]="order.deliveryPlace" (change)="onFieldBlur('deliveryPlace')">
+            <option value="" disabled>Изберете място на доставка</option>
+            <option value="Еcont office">Офис на Еконт</option>
+            <option value="Address">Адрес</option>
+          </select>
+          <small *ngIf="validationErrors.deliveryPlace">{{ validationErrors.deliveryPlace }}</small>
+        </div>
+
+        <div class="cart__form-field" [class.cart__form-field--error]="validationErrors.deliveryAddress">
+          <input type="text" name="deliveryAddress" placeholder="Адрес за доставка" required
+                 [(ngModel)]="order.deliveryAddress" (blur)="onFieldBlur('deliveryAddress')" />
+          <small *ngIf="validationErrors.deliveryAddress">{{ validationErrors.deliveryAddress }}</small>
+        </div>
+
+        <div class="cart__form-field" [class.cart__form-field--error]="validationErrors.phone">
+          <input type="tel" name="phone" placeholder="Телефонен номер" required
+                 [(ngModel)]="order.phone" (blur)="onFieldBlur('phone')" />
+          <small *ngIf="validationErrors.phone">{{ validationErrors.phone }}</small>
+        </div>
       </form>
     </section>
   </aside>

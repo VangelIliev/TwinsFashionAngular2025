@@ -8,8 +8,11 @@ namespace TwinsFashion.Domain.Models
         public Guid Id { get; set; }
         public required string Name { get; set; }
         public string Description { get; set; } = string.Empty;
+        public string LongDescription { get; set; } = string.Empty;
         public int Price { get; set; }
         public int Quantity { get; set; }
+        public string Badge { get; set; } = string.Empty;
+        public string CoverImageUrl { get; set; } = string.Empty;
         public CategoryDto? Category { get; set; }
         public SubCategoryDto? SubCategory { get; set; }
         public ColorDto? Color { get; set; }
