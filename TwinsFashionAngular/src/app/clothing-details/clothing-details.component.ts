@@ -84,7 +84,7 @@ export class ClothingDetailsComponent implements OnInit, OnDestroy {
 
     this.cartService.addItem(this.product, {
       quantity: this.quantity,
-      size: this.selectedSize?.value
+      size: this.selectedSize ? this.selectedSize.value.size : undefined
     });
 
     this.router.navigate(['/cart']);

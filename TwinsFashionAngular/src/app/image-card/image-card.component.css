@@ -48,6 +48,8 @@
   gap: 8px;
   padding: 18px 20px 22px;
   flex: 1;
+  text-align: center;
+  align-items: center;
 }
 
 .card__title {
@@ -64,7 +66,7 @@
 }
 
 .card__price {
-  margin: 12px 0 0;
+  margin: 10px 0 0;
   font-size: 15px;
   font-weight: 600;
   color: #111827;

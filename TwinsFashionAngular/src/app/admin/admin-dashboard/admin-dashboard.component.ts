@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AdminService, AdminProduct, Category, SubCategory, Color, Size } from '../../services/admin.service';
+import { AdminService, AdminProduct, Category, SubCategory, Color, Size, UploadedImage, UpdateProductRequest } from '../../services/admin.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -28,10 +29,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   showAddColorModal = false;
   showAddSizeModal = false;
   showSetCoverModal = false;
+  showEditProductModal = false;
   
   selectedProduct: AdminProduct | null = null;
   selectedProductForCover: AdminProduct | null = null;
   selectedCoverImageId: string | null = null;
+  selectedProductForEdit: AdminProduct | null = null;
   
   // Form data
   newProduct = {
@@ -45,12 +48,25 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     imageUrls: [] as string[],
     sizeIds: [] as string[]
   };
+
+  selectedImageFiles: File[] = [];
+  uploadingImages = false;
+  uploadError: string | null = null;
+
+  selectedSizeIds: Set<string> = new Set<string>();
+  editSelectedSizeIds: Set<string> = new Set<string>();
+  editProductForm = {
+    name: '',
+    price: '',
+    subCategoryId: ''
+  };
+  editSubmitting = false;
+  editError: string | null = null;
   
   newCategory = { name: '' };
   newSubCategory = { categoryId: '', name: '' };
   newColor = { name: '' };
   newSize = { type: '', size: '' };
-  newImageUrl = '';
 
   constructor(
     private adminService: AdminService,
@@ -142,29 +158,79 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.resetProductForm();
   }
 
-  addImageUrl(): void {
-    if (this.newImageUrl.trim()) {
-      this.newProduct.imageUrls.push(this.newImageUrl.trim());
-      this.newImageUrl = '';
+  onImageFilesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const files = input.files ? Array.from(input.files) : [];
+    this.selectedImageFiles = files;
+    this.uploadError = null;
+    this.newProduct.imageUrls = [];
+  }
+
+  removeSelectedImage(index: number): void {
+    this.selectedImageFiles.splice(index, 1);
+  }
+
+  toggleSizeSelection(sizeId: string, checked: boolean): void {
+    if (checked) {
+      this.selectedSizeIds.add(sizeId);
+    } else {
+      this.selectedSizeIds.delete(sizeId);
     }
   }
 
-  removeImageUrl(index: number): void {
-    this.newProduct.imageUrls.splice(index, 1);
+  isSizeSelected(sizeId: string): boolean {
+    return this.selectedSizeIds.has(sizeId);
   }
 
   addProduct(): void {
     if (!this.validateProductForm()) return;
 
-    this.adminService.addProduct(this.newProduct).subscribe({
-      next: () => {
-        this.closeAddProductModal();
-        this.loadAllData();
-      },
-      error: (error) => {
-        console.error('Error adding product:', error);
-      }
-    });
+    const submitProduct = (imageUrls: string[]) => {
+      const payload = {
+        ...this.newProduct,
+        imageUrls,
+        sizeIds: Array.from(this.selectedSizeIds)
+      };
+
+      this.adminService.addProduct(payload).subscribe({
+        next: () => {
+          this.closeAddProductModal();
+          this.loadAllData();
+        },
+        error: (error) => {
+          console.error('Error adding product:', error);
+        }
+      });
+    };
+
+    if (this.selectedImageFiles.length > 0) {
+      this.uploadingImages = true;
+      this.uploadError = null;
+
+      this.adminService.uploadProductImages(this.selectedImageFiles)
+        .pipe(finalize(() => this.uploadingImages = false))
+        .subscribe({
+          next: (results: UploadedImage[]) => {
+            const urls = results
+              .map(result => result.url)
+              .filter(url => !!url);
+
+            if (urls.length === 0) {
+              this.uploadError = 'Неуспешно качване на снимките';
+              return;
+            }
+
+            this.newProduct.imageUrls = urls;
+            submitProduct(urls);
+          },
+          error: (error) => {
+            console.error('Error uploading images:', error);
+            this.uploadError = error.error?.message || 'Грешка при качване на снимките';
+          }
+        });
+    } else {
+      submitProduct(this.newProduct.imageUrls);
+    }
   }
 
   deleteProduct(product: AdminProduct): void {
@@ -178,6 +244,101 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  openEditProductModal(product: AdminProduct): void {
+    this.selectedProductForEdit = product;
+    this.showEditProductModal = true;
+    this.editSubmitting = false;
+    this.editError = null;
+    this.editProductForm = {
+      name: '',
+      price: '',
+      subCategoryId: ''
+    };
+    this.editSelectedSizeIds = new Set(product.sizeIds ?? []);
+  }
+
+  closeEditProductModal(): void {
+    this.showEditProductModal = false;
+    this.selectedProductForEdit = null;
+    this.editSelectedSizeIds.clear();
+    this.editProductForm = {
+      name: '',
+      price: '',
+      subCategoryId: ''
+    };
+    this.editError = null;
+    this.editSubmitting = false;
+  }
+
+  toggleEditSizeSelection(sizeId: string, checked: boolean): void {
+    if (checked) {
+      this.editSelectedSizeIds.add(sizeId);
+    } else {
+      this.editSelectedSizeIds.delete(sizeId);
+    }
+  }
+
+  isEditSizeSelected(sizeId: string): boolean {
+    return this.editSelectedSizeIds.has(sizeId);
+  }
+
+  submitEditProduct(): void {
+    if (!this.selectedProductForEdit) {
+      return;
+    }
+
+    const payload: UpdateProductRequest = {};
+    const nameValue = this.editProductForm.name ?? '';
+    const trimmedName = nameValue.trim();
+    if (trimmedName.length > 0 && trimmedName !== this.selectedProductForEdit.name) {
+      payload.name = trimmedName;
+    }
+
+    const priceRaw = this.editProductForm.price ?? '';
+    const priceValue = priceRaw.toString().trim();
+    if (priceValue.length > 0) {
+      const parsedPrice = Number(priceValue);
+      if (Number.isNaN(parsedPrice) || parsedPrice < 0) {
+        this.editError = 'Моля въведете валидна цена.';
+        return;
+      }
+      const roundedPrice = Math.round(parsedPrice);
+      if (roundedPrice !== this.selectedProductForEdit.price) {
+        payload.price = roundedPrice;
+      }
+    }
+
+    if (this.editProductForm.subCategoryId && this.editProductForm.subCategoryId !== this.selectedProductForEdit.subcategoryId) {
+      payload.subCategoryId = this.editProductForm.subCategoryId;
+    }
+
+    const selectedSizeIds = Array.from(this.editSelectedSizeIds);
+    const originalSizes = new Set(this.selectedProductForEdit.sizeIds ?? []);
+    const sizesChanged = selectedSizeIds.length !== originalSizes.size || selectedSizeIds.some(id => !originalSizes.has(id));
+    if (sizesChanged) {
+      payload.sizeIds = selectedSizeIds;
+    }
+
+    if (Object.keys(payload).length === 0) {
+      this.editError = 'Няма промени за запис.';
+      return;
+    }
+
+    this.editSubmitting = true;
+    this.editError = null;
+    this.adminService.updateProduct(this.selectedProductForEdit.id, payload).subscribe({
+      next: () => {
+        this.editSubmitting = false;
+        this.closeEditProductModal();
+        this.loadAllData();
+      },
+      error: (error) => {
+        this.editSubmitting = false;
+        this.editError = error.error?.message || 'Грешка при обновяване на продукта';
+      }
+    });
   }
 
   // Category management
@@ -323,6 +484,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       imageUrls: [],
       sizeIds: []
     };
+    this.selectedImageFiles = [];
+    this.uploadError = null;
+    this.uploadingImages = false;
+    this.selectedSizeIds.clear();
   }
 
   private validateProductForm(): boolean {
@@ -334,7 +499,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       this.newProduct.categoryId &&
       this.newProduct.subCategoryId &&
       this.newProduct.colorId &&
-      this.newProduct.imageUrls.length > 0
+      (this.newProduct.imageUrls.length > 0 || this.selectedImageFiles.length > 0) &&
+      this.selectedSizeIds.size > 0
     );
   }
 }

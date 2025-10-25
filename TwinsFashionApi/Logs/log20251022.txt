@@ -1,0 +1,81 @@
+2025-10-22 00:41:05.534 +03:00 [INF] User profile is available. Using 'C:\Users\Vange\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-10-22 00:41:05.632 +03:00 [INF] Creating key {bfa1a355-4ff0-4733-81e7-427f9510e4a4} with creation date 2025-10-21 21:41:05Z, activation date 2025-10-23 21:24:09Z, and expiration date 2026-01-19 21:41:05Z.
+2025-10-22 00:41:05.643 +03:00 [INF] Writing data to file 'C:\Users\Vange\AppData\Local\ASP.NET\DataProtection-Keys\key-bfa1a355-4ff0-4733-81e7-427f9510e4a4.xml'.
+2025-10-22 00:41:05.812 +03:00 [INF] Now listening on: https://localhost:7185
+2025-10-22 00:41:05.813 +03:00 [INF] Now listening on: http://localhost:5286
+2025-10-22 00:41:05.871 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-22 00:41:05.872 +03:00 [INF] Hosting environment: Development
+2025-10-22 00:41:05.873 +03:00 [INF] Content root path: C:\Users\Vange\source\repos\New Projects 2025\TwinsFashionAngular\TwinsFashionApi
+2025-10-22 00:41:07.058 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/index.html - null null
+2025-10-22 00:41:07.238 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/index.html - 200 null text/html;charset=utf-8 185.399ms
+2025-10-22 00:41:07.265 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/_vs/browserLink - null null
+2025-10-22 00:41:07.265 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/_framework/aspnetcore-browser-refresh.js - null null
+2025-10-22 00:41:07.277 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/_framework/aspnetcore-browser-refresh.js - 200 16515 application/javascript; charset=utf-8 12.6585ms
+2025-10-22 00:41:07.301 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/_vs/browserLink - 200 null text/javascript; charset=UTF-8 36.3826ms
+2025-10-22 00:41:07.346 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/swagger/v1/swagger.json - null null
+2025-10-22 00:41:07.362 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 16.6693ms
+2025-10-22 00:41:47.486 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/api/products/all - null null
+2025-10-22 00:41:47.505 +03:00 [INF] CORS policy execution successful.
+2025-10-22 00:41:47.521 +03:00 [INF] Executing endpoint 'TwinsFashionApi.Controllers.ProductsController.GetAll (TwinsFashionApi)'
+2025-10-22 00:41:47.546 +03:00 [INF] Route matched with {action = "GetAll", controller = "Products"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[TwinsFashion.Domain.Models.ProductDto]]] GetAll() on controller TwinsFashionApi.Controllers.ProductsController (TwinsFashionApi).
+2025-10-22 00:41:49.069 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-10-22 00:41:49.344 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/api/products/all - null null
+2025-10-22 00:41:49.349 +03:00 [INF] CORS policy execution successful.
+2025-10-22 00:41:49.353 +03:00 [INF] Executing endpoint 'TwinsFashionApi.Controllers.ProductsController.GetAll (TwinsFashionApi)'
+2025-10-22 00:41:49.355 +03:00 [INF] Route matched with {action = "GetAll", controller = "Products"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[TwinsFashion.Domain.Models.ProductDto]]] GetAll() on controller TwinsFashionApi.Controllers.ProductsController (TwinsFashionApi).
+2025-10-22 00:41:49.787 +03:00 [INF] Executed DbCommand (72ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[CategoryId], [p].[ColorId], [p].[Description], [p].[Name], [p].[Price], [p].[Quantity], [p].[SubCategoryId], [c].[Id], [c].[Name], [c0].[Id], [c0].[Name], [s].[Id], [i].[Id], [i].[IsCover], [i].[ProductId], [i].[Url], [s1].[ProductId], [s1].[SizeId], [s1].[Id], [s1].[Name], [s].[CategoryId], [s].[Name]
+FROM [Products] AS [p]
+INNER JOIN [SubCategories] AS [s] ON [p].[SubCategoryId] = [s].[Id]
+INNER JOIN [Categories] AS [c] ON [p].[CategoryId] = [c].[Id]
+INNER JOIN [Colors] AS [c0] ON [p].[ColorId] = [c0].[Id]
+LEFT JOIN [Images] AS [i] ON [p].[Id] = [i].[ProductId]
+LEFT JOIN (
+    SELECT [p0].[ProductId], [p0].[SizeId], [s0].[Id], [s0].[Name]
+    FROM [ProductSize] AS [p0]
+    INNER JOIN [Sizes] AS [s0] ON [p0].[SizeId] = [s0].[Id]
+) AS [s1] ON [p].[Id] = [s1].[ProductId]
+ORDER BY CASE
+    WHEN [s].[Name] = N'Якета' THEN 0
+    ELSE 1
+END, [s].[Name], [p].[Name], [p].[Id], [s].[Id], [c].[Id], [c0].[Id], [i].[Id], [s1].[ProductId], [s1].[SizeId]
+2025-10-22 00:41:49.787 +03:00 [INF] Executed DbCommand (38ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[CategoryId], [p].[ColorId], [p].[Description], [p].[Name], [p].[Price], [p].[Quantity], [p].[SubCategoryId], [c].[Id], [c].[Name], [c0].[Id], [c0].[Name], [s].[Id], [i].[Id], [i].[IsCover], [i].[ProductId], [i].[Url], [s1].[ProductId], [s1].[SizeId], [s1].[Id], [s1].[Name], [s].[CategoryId], [s].[Name]
+FROM [Products] AS [p]
+INNER JOIN [SubCategories] AS [s] ON [p].[SubCategoryId] = [s].[Id]
+INNER JOIN [Categories] AS [c] ON [p].[CategoryId] = [c].[Id]
+INNER JOIN [Colors] AS [c0] ON [p].[ColorId] = [c0].[Id]
+LEFT JOIN [Images] AS [i] ON [p].[Id] = [i].[ProductId]
+LEFT JOIN (
+    SELECT [p0].[ProductId], [p0].[SizeId], [s0].[Id], [s0].[Name]
+    FROM [ProductSize] AS [p0]
+    INNER JOIN [Sizes] AS [s0] ON [p0].[SizeId] = [s0].[Id]
+) AS [s1] ON [p].[Id] = [s1].[ProductId]
+ORDER BY CASE
+    WHEN [s].[Name] = N'Якета' THEN 0
+    ELSE 1
+END, [s].[Name], [p].[Name], [p].[Id], [s].[Id], [c].[Id], [c0].[Id], [i].[Id], [s1].[ProductId], [s1].[SizeId]
+2025-10-22 00:41:50.325 +03:00 [INF] Executing OkObjectResult, writing value of type 'System.Linq.Enumerable+WhereEnumerableIterator`1[[TwinsFashion.Domain.Models.ProductDto, TwinsFashion.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-10-22 00:41:50.325 +03:00 [INF] Executing OkObjectResult, writing value of type 'System.Linq.Enumerable+WhereEnumerableIterator`1[[TwinsFashion.Domain.Models.ProductDto, TwinsFashion.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-10-22 00:41:50.360 +03:00 [INF] Executed action TwinsFashionApi.Controllers.ProductsController.GetAll (TwinsFashionApi) in 992.12ms
+2025-10-22 00:41:50.360 +03:00 [INF] Executed action TwinsFashionApi.Controllers.ProductsController.GetAll (TwinsFashionApi) in 2807.2226ms
+2025-10-22 00:41:50.362 +03:00 [INF] Executed endpoint 'TwinsFashionApi.Controllers.ProductsController.GetAll (TwinsFashionApi)'
+2025-10-22 00:41:50.363 +03:00 [INF] Executed endpoint 'TwinsFashionApi.Controllers.ProductsController.GetAll (TwinsFashionApi)'
+2025-10-22 00:41:50.375 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/api/products/all - 499 null application/json; charset=utf-8 1031.7818ms
+2025-10-22 00:41:50.375 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/api/products/all - 499 null application/json; charset=utf-8 2890.3397ms
+2025-10-22 00:41:50.548 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/api/products/all - null null
+2025-10-22 00:41:50.552 +03:00 [INF] CORS policy execution successful.
+2025-10-22 00:41:50.555 +03:00 [INF] Executing endpoint 'TwinsFashionApi.Controllers.ProductsController.GetAll (TwinsFashionApi)'
+2025-10-22 00:41:50.556 +03:00 [INF] Route matched with {action = "GetAll", controller = "Products"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[TwinsFashion.Domain.Models.ProductDto]]] GetAll() on controller TwinsFashionApi.Controllers.ProductsController (TwinsFashionApi).
+2025-10-22 00:41:50.564 +03:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[TwinsFashion.Domain.Models.ProductDto, TwinsFashion.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-10-22 00:41:50.570 +03:00 [INF] Executed action TwinsFashionApi.Controllers.ProductsController.GetAll (TwinsFashionApi) in 11.6591ms
+2025-10-22 00:41:50.572 +03:00 [INF] Executed endpoint 'TwinsFashionApi.Controllers.ProductsController.GetAll (TwinsFashionApi)'
+2025-10-22 00:41:50.573 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/api/products/all - 200 null application/json; charset=utf-8 26.3281ms
+2025-10-22 00:41:56.711 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7185/api/products/all - null null
+2025-10-22 00:41:56.715 +03:00 [INF] CORS policy execution successful.
+2025-10-22 00:41:56.716 +03:00 [INF] Executing endpoint 'TwinsFashionApi.Controllers.ProductsController.GetAll (TwinsFashionApi)'
+2025-10-22 00:41:56.717 +03:00 [INF] Route matched with {action = "GetAll", controller = "Products"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[TwinsFashion.Domain.Models.ProductDto]]] GetAll() on controller TwinsFashionApi.Controllers.ProductsController (TwinsFashionApi).
+2025-10-22 00:41:56.720 +03:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[TwinsFashion.Domain.Models.ProductDto, TwinsFashion.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-10-22 00:41:56.731 +03:00 [INF] Executed action TwinsFashionApi.Controllers.ProductsController.GetAll (TwinsFashionApi) in 11.1048ms
+2025-10-22 00:41:56.732 +03:00 [INF] Executed endpoint 'TwinsFashionApi.Controllers.ProductsController.GetAll (TwinsFashionApi)'
+2025-10-22 00:41:56.734 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7185/api/products/all - 200 null application/json; charset=utf-8 23.617ms

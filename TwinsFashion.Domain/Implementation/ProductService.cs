@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -33,7 +34,7 @@ namespace TwinsFashion.Domain.Implementation
                     .Include(p => p.Images)
                     .Include(p => p.Sizes)
                     .Include(p => p.SubCategory)
-                    .OrderBy(p => p.SubCategory.Name == "Якета" ? 0 : 1) // Якета първи
+                    .OrderBy(p => p.SubCategory.Name == "Кожени якета" ? 0 : 1) // Якета първи
                     .ThenBy(p => p.SubCategory.Name) // След това по азбучен ред на категориите
                     .ThenBy(p => p.Name) // И накрая по име на продукта
                     .ToListAsync();
@@ -317,21 +318,31 @@ namespace TwinsFashion.Domain.Implementation
 
                 var productId = Guid.NewGuid();
                 var normalizedUrls = (imageUrls ?? Enumerable.Empty<string>())
+                    .Select(u => u?.Replace("\\", "/").Trim())
                     .Where(u => !string.IsNullOrWhiteSpace(u))
-                    .Select(u =>
+                    .Select(url =>
                     {
-                        var url = u.Replace("\\", "/").Trim();
+                        if (Uri.TryCreate(url, UriKind.Absolute, out var absoluteUri) &&
+                            (absoluteUri.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase) ||
+                             absoluteUri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase)))
+                        {
+                            return absoluteUri.ToString();
+                        }
+
                         var idx = url.IndexOf("wwwroot/", StringComparison.OrdinalIgnoreCase);
                         if (idx >= 0)
                         {
                             url = url[(idx + "wwwroot".Length)..];
                         }
+
                         if (!url.StartsWith('/'))
                         {
                             url = "/" + url.TrimStart('~', '/');
                         }
+
                         return url;
                     })
+                    .Where(u => !string.IsNullOrWhiteSpace(u))
                     .Distinct()
                     .ToList();
 
@@ -529,6 +540,128 @@ namespace TwinsFashion.Domain.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error setting cover image {ImageId} for product {ProductId}", imageId, productId);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateProductAsync(Guid productId, string? name, int? price, Guid? subCategoryId, IEnumerable<Guid>? sizeIds)
+        {
+            try
+            {
+                var product = await _context.Products
+                    .Include(p => p.Sizes)
+                    .FirstOrDefaultAsync(p => p.Id == productId);
+
+                if (product == null)
+                {
+                    _logger.LogWarning("Attempted to update product {ProductId} but it was not found", productId);
+                    return false;
+                }
+
+                var hasChanges = false;
+
+                if (!string.IsNullOrWhiteSpace(name) && !string.Equals(product.Name, name, StringComparison.Ordinal))
+                {
+                    product.Name = name.Trim();
+                    hasChanges = true;
+                }
+
+                if (price.HasValue && price.Value >= 0 && product.Price != price.Value)
+                {
+                    product.Price = price.Value;
+                    hasChanges = true;
+                }
+
+                if (subCategoryId.HasValue && subCategoryId.Value != Guid.Empty && product.SubCategoryId != subCategoryId.Value)
+                {
+                    var subCategory = await _context.SubCategories.FirstOrDefaultAsync(sc => sc.Id == subCategoryId.Value);
+                    if (subCategory == null)
+                    {
+                        _logger.LogWarning("Subcategory {SubCategoryId} not found when updating product {ProductId}", subCategoryId, productId);
+                        return false;
+                    }
+
+                    product.SubCategoryId = subCategory.Id;
+                    product.SubCategory = subCategory;
+                    hasChanges = true;
+                }
+
+                if (sizeIds != null)
+                {
+                    var distinctIds = sizeIds.Where(id => id != Guid.Empty).Distinct().ToList();
+                    var sizes = await _context.Sizes.Where(s => distinctIds.Contains(s.Id)).ToListAsync();
+
+                    if (sizes.Count != distinctIds.Count)
+                    {
+                        var missing = distinctIds.Except(sizes.Select(s => s.Id)).ToArray();
+                        _logger.LogWarning("Some size ids were not found when updating product {ProductId}: {Missing}", productId, string.Join(",", missing));
+                    }
+
+                    var currentIds = product.Sizes.Select(s => s.Id).ToHashSet();
+                    var newIds = sizes.Select(s => s.Id).ToHashSet();
+
+                    if (!currentIds.SetEquals(newIds))
+                    {
+                        product.Sizes.Clear();
+                        foreach (var size in sizes)
+                        {
+                            product.Sizes.Add(size);
+                        }
+                        hasChanges = true;
+                    }
+                }
+
+                if (!hasChanges)
+                {
+                    return true;
+                }
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating product {ProductId}", productId);
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteProductAsync(Guid productId)
+        {
+            try
+            {
+                var product = await _context.Products
+                    .Include(p => p.Images)
+                    .Include(p => p.Sizes)
+                    .FirstOrDefaultAsync(p => p.Id == productId);
+
+                if (product == null)
+                {
+                    _logger.LogWarning("Attempted to delete product {ProductId} but it was not found", productId);
+                    return false;
+                }
+
+                if (product.Sizes != null && product.Sizes.Any())
+                {
+                    // Clear many-to-many relationship entries
+                    foreach (var size in product.Sizes.ToList())
+                    {
+                        product.Sizes.Remove(size);
+                    }
+                }
+
+                if (product.Images != null && product.Images.Any())
+                {
+                    _context.Images.RemoveRange(product.Images);
+                }
+
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while deleting product {ProductId}", productId);
                 return false;
             }
         }

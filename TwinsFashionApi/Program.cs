@@ -1,8 +1,13 @@
+using CloudinaryDotNet;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
+using System.IO;
 using Serilog;
 using TwinsFashion.Domain.Extensions;
 using TwinsFashionApi.Models;
 using TwinsFashionApi.Models.Mappings;
+using TwinsFashionApi.Options;
 using TwinsFashionApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +42,20 @@ builder.Services.AddControllers();
 builder.Services.AddMemoryCache();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.Configure<CloudinaryOptions>(builder.Configuration.GetSection("Cloudinary"));
+builder.Services.AddSingleton(provider =>
+{
+    var options = provider.GetRequiredService<IOptions<CloudinaryOptions>>().Value;
+    if (string.IsNullOrWhiteSpace(options.CloudName) ||
+        string.IsNullOrWhiteSpace(options.ApiKey) ||
+        string.IsNullOrWhiteSpace(options.ApiSecret))
+    {
+        throw new InvalidOperationException("Cloudinary configuration is missing. Please set Cloudinary:CloudName, ApiKey, and ApiSecret.");
+    }
+
+    var account = new Account(options.CloudName, options.ApiKey, options.ApiSecret);
+    return new Cloudinary(account);
+});
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -66,6 +85,25 @@ app.UseCors(SpaCorsPolicy);
 app.UseAuthentication();
 app.UseAuthorization();
 
+var defaultFilesOptions = new DefaultFilesOptions();
+defaultFilesOptions.DefaultFileNames.Clear();
+defaultFilesOptions.DefaultFileNames.Add("app/twins-fashion-angular/browser/index.html");
+app.UseDefaultFiles(defaultFilesOptions);
+app.UseStaticFiles();
+
+var spaStaticFilesPath = Path.Combine(app.Environment.WebRootPath ?? string.Empty, "app", "twins-fashion-angular", "browser");
+if (Directory.Exists(spaStaticFilesPath))
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(spaStaticFilesPath),
+        RequestPath = string.Empty
+    });
+}
+
 app.MapControllers();
+
+// Fallback to Angular app for non-API routes
+app.MapFallbackToFile("app/twins-fashion-angular/browser/index.html");
 
 app.Run();

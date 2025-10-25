@@ -1,4 +1,5 @@
-﻿using TwinsFashion.Domain.Models;
+﻿using System;
+using TwinsFashion.Domain.Models;
 
 namespace TwinsFashionApi.Models.Mappings
 {
@@ -88,9 +89,12 @@ namespace TwinsFashionApi.Models.Mappings
                 Name = product.Name ?? string.Empty,
                 Description = product.Description ?? string.Empty,
                 Price = product.Price,
+                CategoryId = product.Category?.Id,
                 Category = product.Category?.Name ?? "Без категория",
+                SubcategoryId = product.SubCategory?.Id,
                 Subcategory = product.SubCategory?.Name ?? "Без подкатегория",
                 Color = product.Color?.Name ?? "Без цвят",
+                ColorId = product.Color?.Id,
                 Images = product.Images.Select(i => new AdminImageViewModel
                 {
                     Id = i.Id,
@@ -99,7 +103,8 @@ namespace TwinsFashionApi.Models.Mappings
                 }).ToList(),
                 CoverImageUrl = product.CoverImageUrl,
                 Sizes = MapViewModelSizes(product.Sizes),
-                Quantity = 1 // Default quantity for admin view
+                SizeIds = product.Sizes.Select(s => s.Id).ToList(),
+                Quantity = product.Quantity
             };
         }
 

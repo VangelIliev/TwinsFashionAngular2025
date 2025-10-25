@@ -33,6 +33,11 @@
   align-items: center;
 }
 
+.cart__item-media {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
 .cart__item-media img {
   width: 100%;
   height: 100%;
@@ -243,6 +248,11 @@
     grid-area: media;
   }
 
+  .cart__item-media img {
+    height: auto;
+    max-height: 320px;
+  }
+
   .cart__item-info {
     grid-area: info;
   }
@@ -271,6 +281,10 @@
       'info'
       'actions'
       'total';
+  }
+
+  .cart__item-media img {
+    max-height: 260px;
   }
 
   .cart__item-actions {

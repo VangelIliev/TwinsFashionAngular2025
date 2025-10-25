@@ -23,11 +23,15 @@ export interface AdminProduct {
   name: string;
   description: string;
   price: number;
+  categoryId: string | null;
   category: string;
+  subcategoryId: string | null;
   color: string;
+  colorId: string | null;
   images: AdminImage[];
   coverImageUrl: string;
   sizes: string[];
+  sizeIds: string[];
   subcategory: string;
   quantity: number;
 }
@@ -69,6 +73,18 @@ export interface AddProductRequest {
   colorId: string;
   imageUrls: string[];
   sizeIds: string[];
+}
+
+export interface UpdateProductRequest {
+  name?: string;
+  price?: number;
+  subCategoryId?: string;
+  sizeIds?: string[];
+}
+
+export interface UploadedImage {
+  url: string;
+  publicId: string;
 }
 
 export interface CreateCategoryRequest {
@@ -143,12 +159,12 @@ export class AdminService {
     return this.http.post(`${this.baseUrl}/products`, product, this.getHttpOptions());
   }
 
-  updateProduct(id: string, product: AddProductRequest): Observable<any> {
+  updateProduct(id: string, product: UpdateProductRequest): Observable<any> {
     return this.http.put(`${this.baseUrl}/products/${id}`, product, this.getHttpOptions());
   }
 
   deleteProduct(id: string): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/products/${id}`, this.getHttpOptions());
+    return this.http.post(`${this.baseUrl}/products/${id}/delete`, {}, this.getHttpOptions());
   }
 
   addCategory(category: CreateCategoryRequest): Observable<any> {
@@ -169,5 +185,11 @@ export class AdminService {
 
   setCoverImage(productId: string, request: SetCoverImageRequest): Observable<any> {
     return this.http.post(`${this.baseUrl}/products/${productId}/set-cover-image`, request, this.getHttpOptions());
+  }
+
+  uploadProductImages(files: File[]): Observable<UploadedImage[]> {
+    const formData = new FormData();
+    files.forEach(file => formData.append('files', file));
+    return this.http.post<UploadedImage[]>(`${this.baseUrl}/upload-images`, formData, this.getHttpOptions());
   }
 }

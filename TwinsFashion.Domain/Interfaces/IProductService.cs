@@ -42,5 +42,11 @@ namespace TwinsFashion.Domain.Interfaces
         
         // Set cover image for product
         Task<bool> SetCoverImageAsync(Guid productId, Guid imageId);
+
+        // Update product properties
+        Task<bool> UpdateProductAsync(Guid productId, string? name, int? price, Guid? subCategoryId, IEnumerable<Guid>? sizeIds);
+
+        // Delete product and related data
+        Task<bool> DeleteProductAsync(Guid productId);
     }
 }

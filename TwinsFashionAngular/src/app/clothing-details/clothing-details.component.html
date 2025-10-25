@@ -47,7 +47,7 @@
         <select [(ngModel)]="selectedSize" name="size">
           <option [ngValue]="undefined" disabled>Изберете размер</option>
           <option *ngFor="let size of item.sizes" [ngValue]="size" [disabled]="!size.inStock">
-            {{ size.label }}
+            {{ size.value.size }}
             <span *ngIf="!size.inStock">(Изчерпано)</span>
           </option>
         </select>

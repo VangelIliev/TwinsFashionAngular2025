@@ -65,6 +65,9 @@
                 <button class="admin-dashboard__action-button" (click)="openSetCoverModal(product)">
                   Cover
                 </button>
+                <button class="admin-dashboard__action-button" (click)="openEditProductModal(product)">
+                  Редактирай
+                </button>
                 <button class="admin-dashboard__action-button admin-dashboard__action-button--danger" (click)="deleteProduct(product)">
                   Изтрий
                 </button>
@@ -78,6 +81,58 @@
 
   <div class="admin-dashboard__loading" *ngIf="loading">
     <p>Зареждане...</p>
+  </div>
+</div>
+
+<!-- Edit Product Modal -->
+<div class="modal" *ngIf="showEditProductModal" (click)="closeEditProductModal()">
+  <div class="modal__content" (click)="$event.stopPropagation()">
+    <div class="modal__header">
+      <h3>Редакция: {{ selectedProductForEdit?.name }}</h3>
+      <button class="modal__close" (click)="closeEditProductModal()">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-group">
+        <label>Ново име (по желание):</label>
+        <input type="text" [(ngModel)]="editProductForm.name" class="form-control" [placeholder]="selectedProductForEdit?.name || ''">
+      </div>
+      <div class="form-group">
+        <label>Нова цена (по желание):</label>
+        <input type="number" [(ngModel)]="editProductForm.price" class="form-control" [placeholder]="selectedProductForEdit?.price?.toString() || ''">
+      </div>
+      <div class="form-group">
+        <label>Подкатегория:</label>
+        <select [(ngModel)]="editProductForm.subCategoryId" class="form-control">
+          <option value="">Без промяна</option>
+          <option *ngFor="let subCategory of subCategories" [value]="subCategory.id">{{ subCategory.name }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Размери:</label>
+        <ng-container *ngIf="sizes.length > 0; else noEditSizes">
+          <div class="size-grid">
+            <label *ngFor="let size of sizes" class="size-option">
+              <input
+                type="checkbox"
+                [checked]="isEditSizeSelected(size.id)"
+                (change)="toggleEditSizeSelection(size.id, $any($event.target).checked)"
+              />
+              <span>{{ size.type }} {{ size.size }}</span>
+            </label>
+          </div>
+        </ng-container>
+        <ng-template #noEditSizes>
+          <p class="form-helper">Няма налични размери. Добавете нов размер от бутона "Добави Размер".</p>
+        </ng-template>
+      </div>
+      <div *ngIf="editError" class="form-error">{{ editError }}</div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn-secondary" (click)="closeEditProductModal()">Отказ</button>
+      <button class="btn btn-primary" (click)="submitEditProduct()" [disabled]="editSubmitting">
+        {{ editSubmitting ? 'Запазване...' : 'Запази' }}
+      </button>
+    </div>
   </div>
 </div>
 
@@ -131,22 +186,45 @@
         </select>
       </div>
       <div class="form-group">
-        <label>URL на снимка:</label>
-        <div class="input-group">
-          <input type="url" [(ngModel)]="newImageUrl" class="form-control" placeholder="https://...">
-          <button type="button" (click)="addImageUrl()" class="btn btn-secondary">Добави</button>
-        </div>
-        <div class="image-urls" *ngIf="newProduct.imageUrls.length > 0">
-          <div *ngFor="let url of newProduct.imageUrls; let i = index" class="image-url-item">
-            <span>{{ url }}</span>
-            <button type="button" (click)="removeImageUrl(i)" class="btn btn-sm btn-danger">&times;</button>
+        <label>Размери:</label>
+        <ng-container *ngIf="sizes.length > 0; else noSizes">
+          <div class="size-grid">
+            <label *ngFor="let size of sizes" class="size-option">
+              <input
+                type="checkbox"
+                [checked]="isSizeSelected(size.id)"
+                (change)="toggleSizeSelection(size.id, $any($event.target).checked)"
+              />
+              <span>{{ size.type }} {{ size.size }}</span>
+            </label>
+          </div>
+        </ng-container>
+        <ng-template #noSizes>
+          <p class="form-helper">Няма налични размери. Добавете нов размер от бутона "Добави Размер".</p>
+        </ng-template>
+      </div>
+      <div class="form-group">
+        <label>Снимки:</label>
+        <input
+          type="file"
+          class="form-control"
+          accept="image/*"
+          multiple
+          (change)="onImageFilesSelected($event)"
+        >
+        <div class="image-urls" *ngIf="selectedImageFiles.length > 0">
+          <div *ngFor="let file of selectedImageFiles; let i = index" class="image-url-item">
+            <span>{{ file.name }}</span>
+            <button type="button" (click)="removeSelectedImage(i)" class="btn btn-sm btn-danger">&times;</button>
           </div>
         </div>
+        <div class="form-helper" *ngIf="uploadingImages">Качване на снимки...</div>
+        <div class="form-error" *ngIf="uploadError">{{ uploadError }}</div>
       </div>
     </div>
     <div class="modal__footer">
       <button class="btn btn-secondary" (click)="closeAddProductModal()">Отказ</button>
-      <button class="btn btn-primary" (click)="addProduct()">Добави</button>
+      <button class="btn btn-primary" (click)="addProduct()" [disabled]="uploadingImages">Добави</button>
     </div>
   </div>
 </div>

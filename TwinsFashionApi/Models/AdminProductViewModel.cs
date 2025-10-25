@@ -6,11 +6,15 @@ namespace TwinsFashionApi.Models
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }
+        public Guid? CategoryId { get; set; }
         public string Category { get; set; } = string.Empty;
+        public Guid? SubcategoryId { get; set; }
         public string Color { get; set; } = string.Empty;
+        public Guid? ColorId { get; set; }
         public List<AdminImageViewModel> Images { get; set; } = new();
         public string CoverImageUrl { get; set; } = string.Empty;
         public List<string> Sizes { get; set; } = new();
+        public List<Guid> SizeIds { get; set; } = new();
         public int Quantity { get; set; } = 1;
         public string Subcategory { get; set; } = string.Empty;
     }
