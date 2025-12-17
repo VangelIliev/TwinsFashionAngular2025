@@ -199,6 +199,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error adding product:', error);
+          this.uploadError = error?.error?.message || 'Грешка при добавяне на продукта';
         }
       });
     };

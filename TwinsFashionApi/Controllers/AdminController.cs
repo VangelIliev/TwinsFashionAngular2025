@@ -238,11 +238,16 @@ namespace TwinsFashionApi.Controllers
                     _cache.Remove(AllProductsCacheKey);
                     return Ok(new { message = "Product added successfully" });
                 }
-                return BadRequest(new { message = "Failed to add product" });
+                return BadRequest(new { message = "Failed to add product. Проверете дали са избрани валидни категория/подкатегория/цвят." });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = $"Error adding product: {ex.Message}" });
+                var root = ex;
+                while (root.InnerException != null)
+                {
+                    root = root.InnerException;
+                }
+                return BadRequest(new { message = $"Error adding product: {root.Message}" });
             }
         }
 

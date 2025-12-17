@@ -278,6 +278,20 @@ namespace TwinsFashion.Domain.Implementation
         {
             try
             {
+                name = (name ?? string.Empty).Trim();
+                description = (description ?? string.Empty).Trim();
+
+                // Defensive validation before hitting the database (prevents SQL truncation with clearer error messages)
+                if (name.Length < 5 || name.Length > 150)
+                {
+                    throw new ArgumentException("Името трябва да е между 5 и 150 символа.", nameof(name));
+                }
+
+                if (description.Length < 10 || description.Length > 1000)
+                {
+                    throw new ArgumentException("Описанието трябва да е между 10 и 1000 символа.", nameof(description));
+                }
+
                 var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
                 var color = await _context.Colors.FirstOrDefaultAsync(c => c.Id == colorId);
                 var subCategory = await _context.SubCategories.FirstOrDefaultAsync(sc => sc.Id == subCategoryId);
@@ -346,6 +360,12 @@ namespace TwinsFashion.Domain.Implementation
                     .Distinct()
                     .ToList();
 
+                var tooLongUrl = normalizedUrls.FirstOrDefault(u => u.Length > 2048);
+                if (tooLongUrl != null)
+                {
+                    throw new ArgumentException("Някоя от снимките има прекалено дълъг URL (над 2048 символа).", nameof(imageUrls));
+                }
+
                 var images = normalizedUrls.Select(url => new Image
                 {
                     Id = Guid.NewGuid(),
@@ -376,8 +396,12 @@ namespace TwinsFashion.Domain.Implementation
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while adding product to database");
-                return false;
+                _logger.LogError(ex,
+                    "Error occurred while adding product to database. NameLength={NameLength}, DescLength={DescLength}, MaxUrlLength={MaxUrlLength}",
+                    (name ?? string.Empty).Length,
+                    (description ?? string.Empty).Length,
+                    (imageUrls ?? Enumerable.Empty<string>()).Select(u => (u ?? string.Empty).Length).DefaultIfEmpty(0).Max());
+                throw;
             }
         }
 
