@@ -1,6 +1,14 @@
 <article class="card">
   <div class="card__media">
-    <img [src]="imageSrc" [alt]="imageAlt || title" loading="lazy" />
+    <img
+      [src]="resolvedSrc"
+      [attr.srcset]="resolvedSrcset || null"
+      [attr.sizes]="resolvedSrcset ? sizesAttr : null"
+      [alt]="imageAlt || title"
+      [attr.loading]="priority ? 'eager' : 'lazy'"
+      decoding="async"
+      [attr.fetchpriority]="priority ? 'high' : null"
+    />
     <span *ngIf="badge" class="card__badge">{{ badge }}</span>
   </div>
 
@@ -9,7 +17,7 @@
     <p *ngIf="hasDescription" class="card__description">{{ description }}</p>
     <p *ngIf="price !== undefined" class="card__price">
       <span class="card__price-label">{{ priceLabel || 'Цена' }}:</span>
-      {{ price | number:'1.2-2' }} лв
+      {{ price | dualCurrency }}
     </p>
   </div>
 </article>

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, tap, catchError, map } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap, catchError, map, concat, filter } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface ClothingImage {
@@ -42,6 +42,11 @@ export interface ClothingItem {
   quantity: number;
   color?: string;
   subcategory?: string;
+  /**
+   * True when the object came from the lightweight `/api/products/summary` endpoint.
+   * Used to decide whether we should still fetch full details.
+   */
+  isSummary?: boolean;
 }
 
 function mapItem(item: any): ClothingItem {
@@ -74,8 +79,32 @@ function mapItem(item: any): ClothingItem {
     sizes: mappedSizes,
     quantity: item.quantity ?? 1,
     color: item.color?.name ?? item.color ?? '',
-    subcategory: item.subCategory?.name ?? item.subcategory ?? ''
+    subcategory: item.subCategory?.name ?? item.subcategory ?? '',
+    isSummary: false
   } as ClothingItem;
+}
+
+function mapSummaryItem(item: any): ClothingItem {
+  const title = item.name ?? item.title ?? '';
+  const coverImage = item.coverImageUrl
+    ? { url: item.coverImageUrl, alt: title, isCover: true }
+    : undefined;
+
+  return {
+    id: item.id,
+    title,
+    category: { id: '', name: '' },
+    description: '',
+    longDescription: '',
+    price: item.price ?? 0,
+    badge: item.badge ?? '',
+    coverImageUrl: item.coverImageUrl ?? '',
+    images: coverImage ? [coverImage] : [],
+    gallery: coverImage ? [coverImage] : [],
+    sizes: [],
+    quantity: item.quantity ?? 1,
+    isSummary: true
+  };
 }
 
 @Injectable({ providedIn: 'root' })
@@ -91,8 +120,9 @@ export class ClothingService {
       return of(this.itemsSubject.value);
     }
 
-    return this.http.get<any[]>(`${this.baseUrl}/all`).pipe(
-      map(items => items.map(mapItem)),
+    // List page loads a lightweight payload; full details are fetched on demand in getById().
+    return this.http.get<any[]>(`${this.baseUrl}/summary`).pipe(
+      map(items => items.map(mapSummaryItem)),
       tap(items => this.itemsSubject.next(items)),
       catchError(() => {
         this.itemsSubject.next([]);
@@ -107,11 +137,17 @@ export class ClothingService {
 
   getById(id: string): Observable<ClothingItem | undefined> {
     const cached = this.itemsSubject.value.find(item => item.id === id);
-    if (cached) {
+    const hasDetails =
+      !!cached &&
+      cached.isSummary !== true &&
+      (cached.images?.length ?? 0) > 0 &&
+      (cached.sizes?.length ?? 0) > 0;
+
+    if (hasDetails) {
       return of(cached);
     }
 
-    return this.http.get<any>(`${this.baseUrl}/${id}`).pipe(
+    const request$ = this.http.get<any>(`${this.baseUrl}/${id}`).pipe(
       map(mapItem),
       tap(item => {
         if (item) {
@@ -127,5 +163,14 @@ export class ClothingService {
       }),
       catchError(() => of(undefined))
     );
+
+    if (cached) {
+      return concat(
+        of(cached),
+        request$.pipe(filter((item): item is ClothingItem => !!item))
+      );
+    }
+
+    return request$;
   }
 }

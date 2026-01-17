@@ -7,12 +7,10 @@ namespace TwinsFashionApi.Models
     {
         [Required]
         [MinLength(5)]
-        [MaxLength(150)]
         public string Name { get; set; } = string.Empty;
 
         [Required]
         [MinLength(10)]
-        [MaxLength(1000)]
         public string Description { get; set; } = string.Empty;
 
         [Range(0, 1000000)]

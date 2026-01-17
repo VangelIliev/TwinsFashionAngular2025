@@ -6,6 +6,8 @@ namespace TwinsFashion.Domain.Interfaces
     {
         public Task<IEnumerable<ProductDto>> GetAllProductsAsync();
 
+        Task<IEnumerable<ProductSummaryDto>> GetProductSummariesAsync();
+
         public Task<ProductDto?> GetProductByIdAsync(Guid id);
         Task<bool> SeedProductToDatabase(string categoryName, string colorName, string subcategoryName, IEnumerable<SizeDto> sizes);
 
@@ -23,7 +25,7 @@ namespace TwinsFashion.Domain.Interfaces
         Task<IEnumerable<SubCategoryDto>> GetSubCategories();
 
         // Creates a new product with related entities
-        Task<bool> AddProductInDatabase(
+        Task<OperationResult> AddProductInDatabase(
             string name,
             string description,
             int price,

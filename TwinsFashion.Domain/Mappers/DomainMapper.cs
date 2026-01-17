@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TwinsFashion.Data.Models;
@@ -85,6 +86,7 @@ namespace TwinsFashion.Domain.Mappers
 
             var images = product.Images ?? [];
             var coverImageUrl = images.FirstOrDefault(img => img.IsCover)?.Url ?? images.FirstOrDefault()?.Url ?? string.Empty;
+            coverImageUrl = WithAutoFormat(coverImageUrl);
 
             return new ProductDto
             {
@@ -115,7 +117,7 @@ namespace TwinsFashion.Domain.Mappers
                 Images = images.Select(img => new ImageDto
                 {
                     Id = img.Id,
-                    Url = img.Url,
+                    Url = WithAutoFormat(img.Url),
                     Alt = string.IsNullOrWhiteSpace(img.Url) ? product.Name : product.Name,
                     IsCover = img.IsCover
                 }).ToList(),
@@ -149,6 +151,29 @@ namespace TwinsFashion.Domain.Mappers
                     Size = size.Name
                 };
             }
+        }
+
+        private static string WithAutoFormat(string? url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                return string.Empty;
+            }
+
+            const string uploadSegment = "/upload/";
+            if (!url.Contains("res.cloudinary.com", StringComparison.OrdinalIgnoreCase) ||
+                !url.Contains(uploadSegment, StringComparison.OrdinalIgnoreCase))
+            {
+                return url;
+            }
+
+            if (url.Contains("/upload/f_auto", StringComparison.OrdinalIgnoreCase) ||
+                url.Contains("/upload/q_auto", StringComparison.OrdinalIgnoreCase))
+            {
+                return url;
+            }
+
+            return url.Replace(uploadSegment, "/upload/f_auto,q_auto/", StringComparison.OrdinalIgnoreCase);
         }
 
     }

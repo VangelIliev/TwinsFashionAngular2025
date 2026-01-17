@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
 namespace TwinsFashion.Data.Models
@@ -9,7 +10,6 @@ namespace TwinsFashion.Data.Models
         public Guid Id { get; set; }
 
         [MinLength(5)]
-        [MaxLength(50)]
         public required string Name { get; set; }
 
         [Range(0, 1000)]
@@ -19,7 +19,6 @@ namespace TwinsFashion.Data.Models
         public int Quantity { get; set; }
 
         [MinLength(10)]
-        [MaxLength(200)]
         public required string Description { get; set; }
 
         public Guid CategoryId { get; set; }

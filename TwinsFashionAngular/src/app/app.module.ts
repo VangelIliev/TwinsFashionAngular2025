@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -15,6 +16,7 @@ import { ContactComponent } from './contact/contact.component';
 import { ClothingDetailsComponent } from './clothing-details/clothing-details.component';
 import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
 import { ThankYouComponent } from './thank-you/thank-you.component';
+import { DualCurrencyPipe } from './shared/dual-currency.pipe';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,8 @@ import { ThankYouComponent } from './thank-you/thank-you.component';
     AboutComponent,
     ContactComponent,
     ClothingDetailsComponent,
-    ShoppingCartComponent
+    ShoppingCartComponent,
+    DualCurrencyPipe
   ],
   imports: [
     BrowserModule,
@@ -36,7 +39,7 @@ import { ThankYouComponent } from './thank-you/thank-you.component';
     AppRoutingModule,
     ThankYouComponent
   ],
-  providers: [],
+  providers: [DecimalPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

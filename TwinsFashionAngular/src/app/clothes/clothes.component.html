@@ -6,18 +6,19 @@
 
   <div class="collection__grid">
     <a
-      *ngFor="let item of items"
+      *ngFor="let item of items; let i = index"
       class="collection__card-link"
       [routerLink]="['/clothes', item.id]"
     >
       <app-image-card
         class="collection__card"
         [imageSrc]="item.coverImageUrl"
-        [imageAlt]="item.coverImageUrl"
+        [imageAlt]="item.title"
         [title]="item.title"
         [price]="item.price"
         [priceLabel]="priceLabel"
         [badge]="item.badge"
+        [priority]="i < 2"
       ></app-image-card>
     </a>
   </div>

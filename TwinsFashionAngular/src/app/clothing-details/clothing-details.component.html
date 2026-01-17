@@ -14,13 +14,13 @@
     </div>
 
     <figure class="details__hero-image">
-      <img [src]="selectedImageUrl" [alt]="gallery[selectedImageIndex].alt || item.title" />
+      <img [src]="selectedImageUrl" [alt]="gallery[selectedImageIndex]?.alt || item.title" />
     </figure>
   </div>
 
   <div class="details__content">
     <h1 class="details__title">{{ item.title }}</h1>
-    <p class="details__price">{{ item.price | number:'1.2-2' }} лв</p>
+    <p class="details__price">{{ item.price | dualCurrency }}</p>
     <p class="details__short">{{ item.description }}</p>
 
     <div class="details__meta">

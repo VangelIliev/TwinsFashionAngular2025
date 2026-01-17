@@ -29,6 +29,7 @@ namespace TwinsFashion.Domain.Implementation
             try
             {
                 var dataProducts = await _context.Products
+                    .AsNoTracking()
                     .Include(p => p.Category)
                     .Include(p => p.Color)
                     .Include(p => p.Images)
@@ -52,11 +53,55 @@ namespace TwinsFashion.Domain.Implementation
             }
         }
 
+        public async Task<IEnumerable<ProductSummaryDto>> GetProductSummariesAsync()
+        {
+            try
+            {
+                var leatherCategoryName = "Кожени якета";
+
+                // Lightweight query for product list page (no Sizes/Images collections in payload)
+                var products = await _context.Products
+                    .AsNoTracking()
+                    .OrderBy(p => p.SubCategory != null && p.SubCategory.Name == leatherCategoryName ? 0 : 1)
+                    .ThenBy(p => p.SubCategory != null ? p.SubCategory.Name : string.Empty)
+                    .ThenBy(p => p.Name)
+                    .Select(p => new ProductSummaryDto
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Price = p.Price,
+                        Quantity = p.Quantity,
+                        Badge = string.Empty,
+                        CoverImageUrl = p.Images
+                            .OrderByDescending(i => i.IsCover)
+                            .Select(i => i.Url)
+                            .FirstOrDefault() ?? string.Empty
+                    })
+                    .ToListAsync();
+
+                if (products != null)
+                {
+                    foreach (var product in products)
+                    {
+                        product.CoverImageUrl = WithAutoFormat(product.CoverImageUrl);
+                    }
+                }
+
+                return products ?? Enumerable.Empty<ProductSummaryDto>();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while retrieving product summaries.");
+                throw;
+            }
+        }
+
         public async Task<ProductDto?> GetProductByIdAsync(Guid id)
         {
             try
             {
                 var dataProduct = await _context.Products
+                    .AsNoTracking()
                     .Include(p => p.Category)
                     .Include(p => p.Color)
                     .Include(p => p.Images)
@@ -265,7 +310,7 @@ namespace TwinsFashion.Domain.Implementation
             }
         }
 
-        public async Task<bool> AddProductInDatabase(
+        public async Task<OperationResult> AddProductInDatabase(
             string name,
             string description,
             int price,
@@ -282,14 +327,14 @@ namespace TwinsFashion.Domain.Implementation
                 description = (description ?? string.Empty).Trim();
 
                 // Defensive validation before hitting the database (prevents SQL truncation with clearer error messages)
-                if (name.Length < 5 || name.Length > 150)
+                if (name.Length < 5)
                 {
-                    throw new ArgumentException("Името трябва да е между 5 и 150 символа.", nameof(name));
+                    return OperationResult.Fail("Името трябва да е поне 5 символа.");
                 }
 
-                if (description.Length < 10 || description.Length > 1000)
+                if (description.Length < 10)
                 {
-                    throw new ArgumentException("Описанието трябва да е между 10 и 1000 символа.", nameof(description));
+                    return OperationResult.Fail("Описанието трябва да е поне 10 символа.");
                 }
 
                 var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
@@ -300,7 +345,7 @@ namespace TwinsFashion.Domain.Implementation
                     _logger.LogWarning(
                         "Invalid related entity id(s). Category: {CategoryId} exists: {HasCategory}, Color: {ColorId} exists: {HasColor}, SubCategory: {SubCategoryId} exists: {HasSubCategory}",
                         categoryId, category != null, colorId, color != null, subCategoryId, subCategory != null);
-                    return false;
+                    return OperationResult.Fail("Невалидни категория/подкатегория/цвят. Моля изберете от списъка.");
                 }
 
                 var sizeIdList = (sizeIds ?? Enumerable.Empty<Guid>()).Distinct().ToList();
@@ -332,7 +377,7 @@ namespace TwinsFashion.Domain.Implementation
 
                 var productId = Guid.NewGuid();
                 var normalizedUrls = (imageUrls ?? Enumerable.Empty<string>())
-                    .Select(u => u?.Replace("\\", "/").Trim())
+                    .Select(u => (u ?? string.Empty).Replace("\\", "/").Trim())
                     .Where(u => !string.IsNullOrWhiteSpace(u))
                     .Select(url =>
                     {
@@ -363,7 +408,7 @@ namespace TwinsFashion.Domain.Implementation
                 var tooLongUrl = normalizedUrls.FirstOrDefault(u => u.Length > 2048);
                 if (tooLongUrl != null)
                 {
-                    throw new ArgumentException("Някоя от снимките има прекалено дълъг URL (над 2048 символа).", nameof(imageUrls));
+                    return OperationResult.Fail("Някоя от снимките има прекалено дълъг URL (над 2048 символа).");
                 }
 
                 var images = normalizedUrls.Select(url => new Image
@@ -392,7 +437,7 @@ namespace TwinsFashion.Domain.Implementation
 
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync();
-                return true;
+                return OperationResult.Ok("Product added successfully");
             }
             catch (Exception ex)
             {
@@ -401,7 +446,7 @@ namespace TwinsFashion.Domain.Implementation
                     (name ?? string.Empty).Length,
                     (description ?? string.Empty).Length,
                     (imageUrls ?? Enumerable.Empty<string>()).Select(u => (u ?? string.Empty).Length).DefaultIfEmpty(0).Max());
-                throw;
+                return OperationResult.Fail("Грешка при запис в базата. Проверете дължината на името/описанието и опитайте отново.");
             }
         }
 
@@ -688,6 +733,29 @@ namespace TwinsFashion.Domain.Implementation
                 _logger.LogError(ex, "Error occurred while deleting product {ProductId}", productId);
                 return false;
             }
+        }
+
+        private static string WithAutoFormat(string? url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                return string.Empty;
+            }
+
+            const string uploadSegment = "/upload/";
+            if (!url.Contains("res.cloudinary.com", StringComparison.OrdinalIgnoreCase) ||
+                !url.Contains(uploadSegment, StringComparison.OrdinalIgnoreCase))
+            {
+                return url;
+            }
+
+            if (url.Contains("/upload/f_auto", StringComparison.OrdinalIgnoreCase) ||
+                url.Contains("/upload/q_auto", StringComparison.OrdinalIgnoreCase))
+            {
+                return url;
+            }
+
+            return url.Replace(uploadSegment, "/upload/f_auto,q_auto/", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

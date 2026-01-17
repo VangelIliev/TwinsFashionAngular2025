@@ -25,6 +25,7 @@ namespace TwinsFashionApi.Controllers
         private readonly IViewMapper _viewMapper;
         private readonly IMemoryCache _cache;
         private const string AllProductsCacheKey = "products:all";
+        private const string ProductSummaryCacheKey = "products:summary";
         private const string ProductByIdCachePrefix = "products:id:";
         private readonly Cloudinary _cloudinary;
         private readonly CloudinaryOptions _cloudinaryOptions;
@@ -221,7 +222,7 @@ namespace TwinsFashionApi.Controllers
         {
             try
             {
-                var success = await _productService.AddProductInDatabase(
+                var result = await _productService.AddProductInDatabase(
                     request.Name,
                     request.Description,
                     request.Price,
@@ -233,12 +234,13 @@ namespace TwinsFashionApi.Controllers
                     request.SizeIds
                 );
 
-                if (success)
+                if (result.Success)
                 {
                     _cache.Remove(AllProductsCacheKey);
-                    return Ok(new { message = "Product added successfully" });
+                    _cache.Remove(ProductSummaryCacheKey);
+                    return Ok(new { message = result.Message });
                 }
-                return BadRequest(new { message = "Failed to add product. Проверете дали са избрани валидни категория/подкатегория/цвят." });
+                return BadRequest(new { message = result.Message });
             }
             catch (Exception ex)
             {
@@ -268,6 +270,7 @@ namespace TwinsFashionApi.Controllers
                 if (success)
                 {
                     _cache.Remove(AllProductsCacheKey);
+                    _cache.Remove(ProductSummaryCacheKey);
                     _cache.Remove(ProductByIdCachePrefix + id);
                     return Ok(new { message = "Product updated successfully" });
                 }
@@ -304,6 +307,7 @@ namespace TwinsFashionApi.Controllers
                 if (deleted)
                 {
                     _cache.Remove(AllProductsCacheKey);
+                    _cache.Remove(ProductSummaryCacheKey);
                     _cache.Remove(ProductByIdCachePrefix + id);
                     return Ok(new { message = "Product deleted successfully" });
                 }
@@ -407,6 +411,7 @@ namespace TwinsFashionApi.Controllers
                 if (success)
                 {
                     _cache.Remove(AllProductsCacheKey);
+                    _cache.Remove(ProductSummaryCacheKey);
                     _cache.Remove(ProductByIdCachePrefix + productId);
                     return Ok(new { message = "Cover image set successfully" });
                 }

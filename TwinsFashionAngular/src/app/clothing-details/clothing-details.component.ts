@@ -65,7 +65,7 @@ export class ClothingDetailsComponent implements OnInit, OnDestroy {
   }
 
   get selectedImageUrl(): string {
-    return this.gallery[this.selectedImageIndex]?.url ?? '';
+    return this.gallery[this.selectedImageIndex]?.url ?? this.product?.coverImageUrl ?? '';
   }
 
   selectImage(index: number): void {

@@ -18,7 +18,7 @@
           </div>
           <div class="cart__item-meta">
             <span class="cart__item-label">Ед. цена:</span>
-            <span class="cart__item-value">{{ item.price | number:'1.2-2' }} лв</span>
+            <span class="cart__item-value">{{ item.price | dualCurrency }}</span>
           </div>
         </div>
 
@@ -35,7 +35,7 @@
         </div>
 
         <div class="cart__item-total">
-          {{ (item.price * item.quantity) | number:'1.2-2' }} лв
+          {{ (item.price * item.quantity) | dualCurrency }}
         </div>
       </article>
     </div>
@@ -91,11 +91,11 @@
       <h2>Обща цена</h2>
       <div class="cart__summary-row">
         <span>Междинна сума</span>
-        <span>{{ subtotal | number:'1.2-2' }} лв</span>
+        <span>{{ subtotal | dualCurrency }}</span>
       </div>
       <div class="cart__summary-row cart__summary-row--total">
         <span>Общо</span>
-        <span>{{ total | number:'1.2-2' }} лв</span>
+        <span>{{ total | dualCurrency }}</span>
       </div>
       <button type="button" class="cart__checkout" (click)="submitOrder()" [disabled]="orderSubmitting">
         {{ orderSubmitting ? 'Изпращане...' : 'Поръчай' }}

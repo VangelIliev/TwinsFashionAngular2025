@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -8,6 +9,7 @@ namespace TwinsFashionApi.Services
 {
     public class EmailSender : IEmailSender
     {
+        private const decimal BgnPerEur = 1.95583m;
         // Our private configuration variables
         private string host;
         private int port;
@@ -65,14 +67,21 @@ namespace TwinsFashionApi.Services
                     stringBuilder.AppendLine($"Име на продукт: {product.Name} <br>");
                     stringBuilder.AppendLine($"Размер: {product.SelectedSize}<br>");
                     stringBuilder.AppendLine($"Количество {product.Quantity} <br>");
-                    stringBuilder.AppendLine($"Цена {product.Price} лв <br>");
+                    stringBuilder.AppendLine($"Цена {FormatEuro(product.Price)} <br>");
                     stringBuilder.AppendLine($"--------------------------<br>");
                 }
 
-                stringBuilder.AppendLine($" <br> <br> <b>Обща сума на поръчката:</b> {products.Sum(p => p.Price * p.Quantity)} лв.");
+                var totalBgn = products.Sum(p => p.Price * p.Quantity);
+                stringBuilder.AppendLine($" <br> <br> <b>Обща сума на поръчката:</b> {FormatEuro(totalBgn)}");
             }
 
             return stringBuilder.ToString().TrimEnd();
+        }
+
+        private static string FormatEuro(decimal amountBgn)
+        {
+            var amountEur = amountBgn / BgnPerEur;
+            return $"€{amountEur.ToString("0.00", CultureInfo.InvariantCulture)}";
         }
     }
 }
